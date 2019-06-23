@@ -11,6 +11,8 @@ C#
 - No airspace restrictions due to pixel ownership with WPF
 
 TODO:
-- Implement render-thread with framebuffers and 
+- Implement background render thread
+- Benchmark against OpenTK control, etc.
+- Why can't the window creation be omitted ?
 
 ![](gif_2.gif)
