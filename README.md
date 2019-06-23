@@ -7,7 +7,8 @@ C++
 - glad for OpenGL calls
 
 C#
-- using a WriteableBitmap and it's Backbuffer
+- Using a WriteableBitmap and it's Backbuffer
+- No airspace restrictions due to pixel ownership with WPF
 
 TODO:
 - Implement render-thread with framebuffers and 
