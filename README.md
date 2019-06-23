@@ -13,4 +13,4 @@ C#
 TODO:
 - Implement render-thread with framebuffers and 
 
-![Alt text](blob/master/img_2.gif?raw=true "TestImage"
+![Alt text]https://github.com/MonoMaxMW/MonoMax.GLPlayground/blob/master/img_2.gif
