@@ -1,0 +1,36 @@
+﻿<Window x:Class="MonoMax.GLSandboxApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gl="clr-namespace:MonoMaxGraphics;assembly=MonoMax.MonoMaxGraphics"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="480" Width="640">
+    <Grid>
+        <Grid Panel.ZIndex="1">
+            <TreeView Background="Transparent">
+                <TreeView.Items>
+                    <TreeViewItem Header="Node_1">
+                        <TreeViewItem Header="Node_1.1" />
+                        <TreeViewItem Header="Node_1.2" />
+                        <TreeViewItem Header="Node_1.3" />
+                        <TreeViewItem Header="Node_1.4" />
+                    </TreeViewItem>
+                    <TreeViewItem Header="Node_2">
+                        <TreeViewItem Header="Node_2.1" />
+                        <TreeViewItem Header="Node_2.2" />
+                        <TreeViewItem Header="Node_2.3" />
+                        <TreeViewItem Header="Node_2.4" />
+                    </TreeViewItem>
+                    <TreeViewItem Header="Node_1">
+                        <TreeViewItem Header="Node_3.1" />
+                        <TreeViewItem Header="Node_3.2" />
+                        <TreeViewItem Header="Node_3.3" />
+                        <TreeViewItem Header="Node_3.4" />
+                    </TreeViewItem>
+                </TreeView.Items>
+            </TreeView>
+        </Grid>
+        <gl:GLControl Grid.Column="0" Grid.ColumnSpan="2" />
+    </Grid>
+</Window>
