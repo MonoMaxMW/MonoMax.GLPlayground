@@ -13,4 +13,4 @@ C#
 TODO:
 - Implement render-thread with framebuffers and 
 
-![](https://github.com/MonoMaxMW/MonoMax.GLPlayground/blob/master/img_2.gif)
+![](gif_2.gif)
