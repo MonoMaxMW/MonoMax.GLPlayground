@@ -30,6 +30,20 @@
                     </TreeViewItem>
                 </TreeView.Items>
             </TreeView>
+            <ListView VerticalAlignment="Center" HorizontalAlignment="Center"
+                      Background="Transparent"
+                      MaxHeight="100">
+                <ListView.Items>
+                    <TextBlock Text="ListViewItem_1" />
+                    <TextBlock Text="ListViewItem_2" />
+                    <TextBlock Text="ListViewItem_3" />
+                    <TextBlock Text="ListViewItem_4" />
+                    <TextBlock Text="ListViewItem_5" />
+                    <TextBlock Text="ListViewItem_6" />
+                    <TextBlock Text="ListViewItem_7" />
+                    <TextBlock Text="ListViewItem_8" />
+                </ListView.Items>
+            </ListView>
         </Grid>
         <gl:GLControl Grid.Column="0" Grid.ColumnSpan="2" />
     </Grid>
