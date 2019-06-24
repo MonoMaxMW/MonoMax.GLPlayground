@@ -2,7 +2,7 @@
 
 in vec3 aPos;
 out vec4 passColor;
-uniform mat4 modlMat, viewMat, projMat;
+uniform mat4 uModlMat, uViewMat, uProjMat;
 
 void main()
 {

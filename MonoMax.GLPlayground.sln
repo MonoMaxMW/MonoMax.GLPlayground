@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoMax.CPQ", "MonoMax.GLSa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{4243089A-1705-4C60-87E5-55BB47A863F9}"
 	ProjectSection(SolutionItems) = preProject
+		simple_color2_fs.glsl = simple_color2_fs.glsl
+		simple_color2_vs.glsl = simple_color2_vs.glsl
 		simple_color_fs.glsl = simple_color_fs.glsl
 		simple_color_vs.glsl = simple_color_vs.glsl
 	EndProjectSection
