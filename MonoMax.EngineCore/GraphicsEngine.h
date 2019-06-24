@@ -12,6 +12,8 @@ namespace MonoMaxGraphics
 	{
 
 	private:
+		glm::mat4 mProjMat, mViewMat, mModlMat;
+
 		int m_bufferLength;
 		GLuint m_vao, m_vbo;
 		GLuint m_prg;
@@ -23,8 +25,6 @@ namespace MonoMaxGraphics
 		std::string getShaderCode(const char* filename);
 		void addShader(GLuint prgId, const std::string shadercode, GLenum shadertype);
 
-		void createBufferObject(void);
-		void destroyBufferObjects(void);
 		void initWindow(void);
 		void initRenderData(void);
 		void initShaders(void);

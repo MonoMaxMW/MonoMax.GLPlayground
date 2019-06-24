@@ -1,6 +1,6 @@
 #include "GLControl.h"
 
-using namespace System::Threading::Tasks;
+using namespace System::Threading;
 using namespace System::Windows;
 using namespace System::Windows::Media;
 using namespace System::Windows::Media::Imaging;
@@ -8,18 +8,18 @@ using namespace System::Windows::Controls;
 
 namespace MonoMaxGraphics
 {
-	bool isInitialized;
-	int _w, _h, fpsCounter;
-
+	int _w, _h, _fps;
+	int oldW, oldH;
 
 	void GLControl::OnRenderSizeChanged(System::Windows::SizeChangedInfo^ info)
 	{
 		_w = (int)info->NewSize.Width;
 		_h = (int)info->NewSize.Height;
 
-		if (!isInitialized)
+		if (!m_isInitialized)
 		{
-			double updateRate = 1;
+			m_graphicsEngine = new MonoMaxGraphics::GraphicsEngine();
+			m_canRender = true;
 
 			Grid^ mainGrid = gcnew Grid();
 			m_fpsCounter = gcnew TextBlock();
@@ -28,12 +28,6 @@ namespace MonoMaxGraphics
 			
 
 			m_lastUpdate = System::DateTime::Now;
-
-
-			m_renderTimer = gcnew System::Windows::Threading::DispatcherTimer(System::Windows::Threading::DispatcherPriority::Send);
-			m_renderTimer->Interval = System::TimeSpan::FromMilliseconds(updateRate);
-			m_renderTimer->Tick += gcnew System::EventHandler(this, &MonoMaxGraphics::GLControl::OnTick);
-			m_renderTimer->Start();
 
 			m_ImageControl = gcnew Image();
 			m_ImageControl->RenderTransformOrigin = Point(0.5, 0.5);
@@ -46,25 +40,30 @@ namespace MonoMaxGraphics
 
 			System::Windows::Controls::Panel::SetZIndex(m_ImageControl, -1);
 
-			m_graphicsEngine = new MonoMaxGraphics::GraphicsEngine();
-			m_graphicsEngine->Init();
-			isInitialized = true;
+			m_cancelToken = gcnew CancellationTokenSource();
+			m_renderThread = gcnew Thread(gcnew ParameterizedThreadStart(this, &GLControl::RenderThreadLoop));
+			m_renderThread->IsBackground = true;
+			m_renderThread->Start(m_cancelToken);
+
 		}
 
-		m_graphicsEngine->Resize(_w, _h);
 		m_writeableImg = gcnew WriteableBitmap(_w, _h, 96, 96, PixelFormats::Pbgra32, nullptr);
-		m_WriteableBuffer = (char*)m_writeableImg->BackBuffer.ToPointer();
+		m_bufferPtr = (char*)m_writeableImg->BackBuffer.ToPointer();
 		m_ImageControl->Source = m_writeableImg;
 	}
 
-	bool GLControl::GetIsRunning(void)
+	void GLControl::Terminate(void)
 	{
-		return m_isRunning;
+		m_cancelToken->Cancel();
+		m_renderThread->Abort();
+		m_renderThread->Join();
+
+		delete m_graphicsEngine;
 	}
 
-	void GLControl::Destroy(void)
+	void GLControl::ChangeState(bool status)
 	{
-		delete m_graphicsEngine;
+		m_canRender = status;
 	}
 
 	void GLControl::UpdateImageData(void)
@@ -74,20 +73,59 @@ namespace MonoMaxGraphics
 		m_writeableImg->Unlock();
 	}
 
+	void GLControl::RenderThreadLoop(System::Object^ token)
+	{
+		m_graphicsEngine->Init();
+		m_isInitialized = true;
+		m_lastUpdate = System::DateTime::Now;
+
+		while (!m_cancelToken->IsCancellationRequested)
+		{
+			if (m_canRender)
+			{
+				if (_w != oldW || _h != oldH)
+				{
+					m_graphicsEngine->Resize(_w, _h);
+					oldW = _w;
+					oldH = _h;
+				}
+
+				m_graphicsEngine->Render(m_bufferPtr);
+
+				//if ((System::DateTime::Now - m_lastUpdate).TotalMilliseconds >= 1000)
+				//{
+				//	m_ImageControl->Dispatcher->Invoke(gcnew System::Action(this, &GLControl::UpdateFps));
+
+				//	m_lastUpdate = System::DateTime::Now;
+				//	_fps = 0;
+				//}
+
+				m_ImageControl->Dispatcher->BeginInvoke(gcnew System::Action(this, &GLControl::UpdateImageData));
+
+				//_fps++;
+			}
+		}
+	}
+
+	void GLControl::UpdateFps(void)
+	{
+		m_fpsCounter->Text = _fps.ToString();
+	}
+
 	void GLControl::OnTick(System::Object^ sender, System::EventArgs^ e)
 	{
 		System::TimeSpan elapsed = (System::DateTime::Now - m_lastUpdate);
 		if (elapsed.TotalMilliseconds >= 1000)
 		{
-			m_fpsCounter->Text = "FPS= " + fpsCounter.ToString();
-			fpsCounter = 0;
+			m_fpsCounter->Text = "FPS= " + _fps.ToString();
+			_fps = 0;
 			m_lastUpdate = System::DateTime::Now;
 		}
 
-		m_graphicsEngine->Render(m_WriteableBuffer);
+		m_graphicsEngine->Render(m_bufferPtr);
 		m_ImageControl->Dispatcher->Invoke(gcnew System::Action(this, &GLControl::UpdateImageData));
 
-		fpsCounter++;
+		_fps++;
 	}
 }
 

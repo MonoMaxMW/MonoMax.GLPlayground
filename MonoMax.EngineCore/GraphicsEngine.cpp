@@ -58,7 +58,7 @@ namespace MonoMaxGraphics
 
 		glEnable(GL_MULTISAMPLE);
 
-		modelMat = glm::rotate(glm::mat4(1.0f), rotY, glm::vec3(0.0f, 1.0f, 0.0f));
+		modelMat = glm::mat4(1.0f);
 
 		glBindVertexArray(m_vao);
 		{
@@ -70,7 +70,7 @@ namespace MonoMaxGraphics
 		}
 		glBindVertexArray(0);
 
-		rotY += 0.05f;
+		rotY -= 0.05f;
 
 		if(imgBuffer != nullptr)
 			glReadPixels(0, 0, m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, imgBuffer);
@@ -81,30 +81,6 @@ namespace MonoMaxGraphics
 
 	const int GraphicsEngine::GetHeight(void) { return m_height; }
 	const int GraphicsEngine::GetWidth(void) { return m_width; }
-
-	void GraphicsEngine::createBufferObject(void)
-	{
-		destroyBufferObjects();
-
-		//glGenFramebuffers(1, &m_fbo);
-		//glGenRenderbuffers(1, &m_rbo);
-
-		//glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
-		//glRenderbufferStorage(GL_RENDERBUFFER, GL_BGRA, m_width, m_height);
-		//glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-		//glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_rbo);
-
-	}
-
-	void GraphicsEngine::destroyBufferObjects(void)
-	{
-		if (m_fbo > 0)
-			glDeleteFramebuffers(1, &m_fbo); m_fbo = -1;
-
-		if (m_rbo > 0)
-			glDeleteFramebuffers(1, &m_rbo); m_rbo = -1;
-
-	}
 
 	void GraphicsEngine::initWindow(void)
 	{
@@ -176,7 +152,13 @@ namespace MonoMaxGraphics
 		free(GLRenderHandle);
 		GLRenderHandle = (char*)malloc(m_bufferLength);
 
-		createBufferObject();
+		mProjMat = glm::perspective(
+			glm::radians(60.0f),
+			(float)width / height,
+			0.01f,
+			100.0f);
+
+		mViewMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 		glViewport(0, 0, width, height);
 
