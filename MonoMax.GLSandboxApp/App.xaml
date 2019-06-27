@@ -6,6 +6,13 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
+                    <Color x:Key="SelectedItemColor">DodgerBlue</Color>
+                    <Color x:Key="SelectionBrushColor">Red</Color>
+
+                    <SolidColorBrush x:Key="SelectedItemBrush" Color="{StaticResource SelectedItemColor}" />
+                    <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionBrushColor}" />
+                </ResourceDictionary>
+                <ResourceDictionary>
                     <boot:MefBootstrapper x:Key="boot" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MonoMax.CPQ.Models.Nodes;
+using MonoMax.CPQ.ViewModels.Tools;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,31 @@ namespace MonoMax.CPQ.Views.Tools
         public NodesView()
         {
             InitializeComponent();
+        }
+
+        private void Treeview_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            var vm = (this.DataContext as NodesViewModel);
+            var item = e.NewValue as Node;
+
+            vm.NodeManager.SelectedNode = item;
+
+            item = null;
+            vm = null;
+        }
+
+        private void TextBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBox;
+
+            tb.Focus();
+            tb.SelectAll();
+
+        }
+
+        private void TextBox_Unloaded(object sender, RoutedEventArgs e)
+        {
+            treeview.Items.Refresh();
         }
     }
 }

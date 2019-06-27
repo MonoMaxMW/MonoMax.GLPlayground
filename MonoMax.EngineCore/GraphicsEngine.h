@@ -1,42 +1,39 @@
 #pragma once
-#include "common.h"
-#include <iostream>
-#include <ostream>
-#include <fstream>
-#include <functional>
+#include "math.h"
+#include "opengl.h"
+#include "ShaderPrg.h"
+#include "ShaderManger.h"
+
 
 namespace MonoMaxGraphics
 {
-
 	class GraphicsEngine
 	{
 
 	private:
-		glm::mat4 mProjMat, mViewMat, mModlMat;
+		glm::mat4 mProjMat;
+		glm::mat4 mViewMat;
+		glm::mat4 mModlMat;
 
-		int m_bufferLength;
-		GLuint m_vao, m_vbo;
-		GLuint m_prg;
-		GLuint m_rbo, m_fbo;
+		ShaderManger* mShaderManager;
+
+		int mBufferLength;
+		GLuint mVao, mVbo;
 		int m_width, m_height;
-		GLFWwindow* m_window;
+		GLFWwindow* mWindow;
 		bool isRunning = false;
-
 		std::string getShaderCode(const char* filename);
-		void addShader(GLuint prgId, const std::string shadercode, GLenum shadertype);
 
-		void initWindow(void);
+		void initWindow(bool invisibleWindow);
 		void initRenderData(void);
 		void initShaders(void);
-		std::function<void(void)> m_rendercallback;
 
 	public:
 
 		char* GLRenderHandle;
 		const int GetWidth(void);
 		const int GetHeight(void);
-		const int GetBufferLenght(void);
-		void Init(void);
+		void Init(bool offscreen);
 		void DeInit(void);
 		void Resize(int width, int height);
 		void Stop(void);

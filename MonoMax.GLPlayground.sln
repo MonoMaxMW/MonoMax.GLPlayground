@@ -7,15 +7,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoMax.CPQ", "MonoMax.GLSa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{4243089A-1705-4C60-87E5-55BB47A863F9}"
 	ProjectSection(SolutionItems) = preProject
-		simple_color2_fs.glsl = simple_color2_fs.glsl
-		simple_color2_vs.glsl = simple_color2_vs.glsl
-		simple_color_fs.glsl = simple_color_fs.glsl
-		simple_color_vs.glsl = simple_color_vs.glsl
+		..\..\shaders\simple_color_fs.glsl = ..\..\shaders\simple_color_fs.glsl
+		..\..\shaders\simple_color_vs.glsl = ..\..\shaders\simple_color_vs.glsl
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MonoMax.MonoMaxGraphics", "MonoMax.WpfDrawing\MonoMax.SceneGraphCLR.vcxproj", "{1BCDF537-15FB-4C65-9993-4C6874F98EAF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MonoMax.Engine", "MonoMax.EngineCore\MonoMax.GLPlayground.vcxproj", "{ADEF9D59-FF68-4286-9093-69DA1D6CA7FD}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MonoMax.GLDebug", "MonoMax.GLDebug\MonoMax.GLDebug.vcxproj", "{1ECC69B4-7618-4790-A6BF-2F3F6251060F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +35,10 @@ Global
 		{ADEF9D59-FF68-4286-9093-69DA1D6CA7FD}.Debug|x64.Build.0 = Debug|x64
 		{ADEF9D59-FF68-4286-9093-69DA1D6CA7FD}.Release|x64.ActiveCfg = Release|x64
 		{ADEF9D59-FF68-4286-9093-69DA1D6CA7FD}.Release|x64.Build.0 = Release|x64
+		{1ECC69B4-7618-4790-A6BF-2F3F6251060F}.Debug|x64.ActiveCfg = Debug|x64
+		{1ECC69B4-7618-4790-A6BF-2F3F6251060F}.Debug|x64.Build.0 = Debug|x64
+		{1ECC69B4-7618-4790-A6BF-2F3F6251060F}.Release|x64.ActiveCfg = Release|x64
+		{1ECC69B4-7618-4790-A6BF-2F3F6251060F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

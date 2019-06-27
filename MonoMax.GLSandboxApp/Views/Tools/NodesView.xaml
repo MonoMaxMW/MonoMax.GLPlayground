@@ -3,26 +3,81 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:dt="clr-namespace:MonoMax.CPQ.Helpers"
+             xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="400">
-    <TreeView Background="Transparent" BorderThickness="0"
-              ItemsSource="{Binding NodeManager}">
-        <TreeView.ItemTemplateSelector>
-            <dt:NodeDataTemplateSelector>
-                <dt:NodeDataTemplateSelector.NodeTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding ChildNodes}">
-                        <TextBlock Text="{Binding Name}" />
-                    </HierarchicalDataTemplate>
-                </dt:NodeDataTemplateSelector.NodeTemplate>
-            </dt:NodeDataTemplateSelector>
-        </TreeView.ItemTemplateSelector>
+             d:DesignHeight="400" d:DesignWidth="400"
+             x:Name="uc">
+    <TreeView x:Name="treeview" Background="Transparent" BorderThickness="0"
+              ItemsSource="{Binding NodeManager}"
+              SelectedItemChanged="Treeview_SelectedItemChanged">
         <TreeView.Resources>
-
-
-            <Style TargetType="{x:Type TreeViewItem}">
-                <Setter Property="Header" Value="{Binding Name}" />
-            </Style>
+            <DataTemplate x:Key="NormalTemplate">
+                <TextBlock Text="{Binding Name}" />
+            </DataTemplate>
+            <DataTemplate x:Key="EditTemplate">
+                <TextBox BorderThickness="0" Margin="-3,-1,-3,-1" Text="{Binding ElementName=uc, Path=DataContext.NodeManager.NewName, UpdateSourceTrigger=PropertyChanged}"
+                         Background="Transparent"
+                         Foreground="White"
+                         Loaded="TextBox_Loaded"
+                         Unloaded="TextBox_Unloaded" SelectionBrush="{StaticResource SelectionBrush}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="KeyDown">
+                            <cal:ActionMessage MethodName="EditableTextboxKeyPressHandler">
+                                <cal:Parameter Value="$eventArgs" />
+                            </cal:ActionMessage>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBox>
+            </DataTemplate>
         </TreeView.Resources>
+        <TreeView.InputBindings>
+            <KeyBinding Key="Delete" Command="{Binding NodeManager.Commands[deleteNodeCmd]}" />
+            <KeyBinding Key="F2" Command="{Binding NodeManager.Commands[changeNameCmd]}" />
+            <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NodeManager.Commands[addNodeCmd]}" />
+        </TreeView.InputBindings>
+        <TreeView.ItemTemplate>
+            <HierarchicalDataTemplate DataType="{x:Type TreeViewItem}" ItemsSource="{Binding ChildNodes}">
+                <Border Margin="2" x:Name="bd" Tag="{Binding Name}">
+                    <ContentPresenter Content="{Binding}">
+                        <ContentPresenter.Style>
+                            <Style TargetType="{x:Type ContentPresenter}">
+                                <Setter Property="ContentTemplate" Value="{StaticResource NormalTemplate}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsInEditMode}" Value="True">
+                                        <Setter Property="ContentTemplate" Value="{StaticResource EditTemplate}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ContentPresenter.Style>
+                    </ContentPresenter>
+                </Border>
+            </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+        <TreeView.ItemContainerStyle>
+            <Style TargetType="{x:Type TreeViewItem}">
+                <Style.Resources>
+                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource SelectedItemColor}" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{StaticResource SelectedItemColor}" />
+                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+                </Style.Resources>
+                <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                <Setter Property="Tag" Value="{Binding ElementName=uc, Path=DataContext}" />
+                <Setter Property="ContextMenu">
+                    <Setter.Value>
+                        <ContextMenu DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}"
+                                     ItemsSource="{Binding NodeManager.Commands.Values}">
+                            <ContextMenu.Resources>
+                                <Style TargetType="{x:Type MenuItem}">
+                                    <Setter Property="Header" Value="{Binding Caption}" />
+                                </Style>
+                            </ContextMenu.Resources>
+                        </ContextMenu>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </TreeView.ItemContainerStyle>
     </TreeView>
 </UserControl>

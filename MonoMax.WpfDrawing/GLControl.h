@@ -1,7 +1,7 @@
 #pragma once
 
 #pragma managed(push, off)
-#include "../MonoMax.EngineCore/EngineCore.h"
+#include "../MonoMax.EngineCore/Core.h"
 #pragma managed(pop)
 
 namespace MonoMaxGraphics

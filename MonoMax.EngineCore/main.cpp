@@ -1,8 +1,4 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include "common.h"
-#include "EngineCore.h"
+#include "Core.h"
 
 void main()
 {

@@ -6,7 +6,9 @@
              xmlns:gl="clr-namespace:MonoMaxGraphics;assembly=MonoMax.MonoMaxGraphics"
              mc:Ignorable="d" 
              d:DesignHeight="480" d:DesignWidth="640">
-    <gl:GLControl>
-            
-    </gl:GLControl>
+    <Grid>
+        <gl:GLControl>
+
+        </gl:GLControl>
+    </Grid>
 </UserControl>

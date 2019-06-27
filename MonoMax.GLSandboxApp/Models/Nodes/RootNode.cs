@@ -10,11 +10,7 @@ namespace MonoMax.CPQ.Models.Nodes
     {
         public RootNode()
         {
-            _childNodes.Add(new TextNode());
-            _childNodes.Add(new TextNode());
-            _childNodes.Add(new TextNode());
-            _childNodes.Add(new TextNode());
-
+            Name = "Root";
         }
     }
 }

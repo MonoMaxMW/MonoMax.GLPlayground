@@ -75,7 +75,7 @@ namespace MonoMaxGraphics
 
 	void GLControl::RenderThreadLoop(System::Object^ token)
 	{
-		m_graphicsEngine->Init();
+		m_graphicsEngine->Init(true);
 		m_isInitialized = true;
 		m_lastUpdate = System::DateTime::Now;
 
