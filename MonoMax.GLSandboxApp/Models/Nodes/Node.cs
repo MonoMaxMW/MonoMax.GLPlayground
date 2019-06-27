@@ -9,10 +9,17 @@ using System.Windows.Input;
 
 namespace MonoMax.CPQ.Models.Nodes
 {
+    public enum NodeType
+    {
+        Root,
+        Text,
+        Mesh,
+        Transformation
+    }
+
     public abstract class Node : PropertyChangedBase
     {
         private bool _isExpanded;
-        private string _name;
         private bool _isSelected;
         protected readonly ObservableCollection<Node> _childNodes = new ObservableCollection<Node>();
 
@@ -21,6 +28,7 @@ namespace MonoMax.CPQ.Models.Nodes
             Name = GetType().Name;
         }
 
+        public abstract NodeType NodeType { get; }
         public object Tag { get; set; }
         public string Name { get; protected set; }
         public Node Parent { get; private set; }

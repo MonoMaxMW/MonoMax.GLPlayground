@@ -7,7 +7,15 @@
              mc:Ignorable="d" 
              d:DesignHeight="480" d:DesignWidth="640">
     <Grid>
-        <gl:GLControl>
+        <Grid Panel.ZIndex="1">
+            <StackPanel>
+                <Grid Height="10" />
+                <StackPanel Margin="3" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button Content="Load mock data" Command="{Binding LoadMockDataCmd}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <gl:GLControl x:Name="GLControl" Loaded="GLControl_Initialized">
 
         </gl:GLControl>
     </Grid>

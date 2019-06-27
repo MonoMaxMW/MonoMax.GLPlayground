@@ -126,6 +126,7 @@
     <Compile Include="Helpers\AutobinderTemplateSelector.cs" />
     <Compile Include="Helpers\MefBootstrapper.cs" />
     <Compile Include="Helpers\NodeDataTemplateSelector.cs" />
+    <Compile Include="Helpers\NodeTypeBackgroundConverter.cs" />
     <Compile Include="Helpers\RelayCommand.cs" />
     <Compile Include="Models\Nodes\Node.cs" />
     <Compile Include="Models\Nodes\NodeManager.cs" />

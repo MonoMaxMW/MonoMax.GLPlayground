@@ -7,7 +7,7 @@
         xmlns:dockctrl="clr-namespace:Xceed.Wpf.AvalonDock.Controls;assembly=Xceed.Wpf.AvalonDock"
         xmlns:ds="clr-namespace:MonoMax.CPQ.Helpers"
         xmlns:cal="http://www.caliburnproject.org"
-        TextElement.FontFamily="Roboto"
+        TextElement.FontFamily="DejaVu Sans"
         mc:Ignorable="d"
         Title="MonoMax.CPQ" Width="640" Height="480">
     <Grid>

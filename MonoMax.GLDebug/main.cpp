@@ -8,6 +8,7 @@ int main()
 	MonoMaxGraphics::GraphicsEngine* engine = new MonoMaxGraphics::GraphicsEngine();
 	engine->Init(false);
 	engine->Resize(640, 480);
+	//engine->AddMesh("C:/tmp/stl/test_1.stl");
 
 	while (true)
 	{

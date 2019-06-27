@@ -6,15 +6,6 @@
 
 namespace MonoMaxGraphics
 {
-	float rotY;
-
-	float vertices[] =
-	{
-		0.0f, 0.5f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		0.5f, -0.5f, 0.0f,
-	};
-
 	std::string GraphicsEngine::getShaderCode(const char* filename)
 	{
 		std::string shaderCode;
@@ -56,18 +47,44 @@ namespace MonoMaxGraphics
 		}
 		mShaderManager->AddShaderPrg(simple);
 
+		mNeedsMeshDataUpdate = true;
+
+		mVertices.push_back(0.0f);
+		mVertices.push_back(0.5f);
+		mVertices.push_back(0.0f);
+
+		mVertices.push_back(-0.5f);
+		mVertices.push_back(-0.5f);
+		mVertices.push_back(0.0f);
+
+		mVertices.push_back(0.5f);
+		mVertices.push_back(-0.5f);
+		mVertices.push_back(0.0f);
+
+	}
+
+	void GraphicsEngine::updateMeshData(void)
+	{
+		if (!mNeedsMeshDataUpdate || mVertices.size() == 0)
+			return;
+
 		glBindVertexArray(mVao);
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, mVertices.size(), &mVertices, GL_STATIC_DRAW);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 		glBindVertexArray(0);
+
+		mNeedsMeshDataUpdate = false;
 	}
 
 	void GraphicsEngine::Render(char* imgBuffer)
 	{
+		updateMeshData();
+
+
 		glClearColor(0.8f, 0.8f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -94,6 +111,66 @@ namespace MonoMaxGraphics
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();
 	}
+
+	void GraphicsEngine::AddMesh(const char* filename)
+	{
+		std::ifstream input(filename, std::ios::in | std::ios::binary);
+
+		char header_info[80] = "";
+		char nTri[4];
+		unsigned long nrTri;
+
+		input.read(header_info, 80);
+		input.read(nTri, 4);
+
+		nrTri = *((unsigned long*)nTri);
+
+		char data[4 * 3 + 4 * 3 * 3 + 2];
+		int sz = sizeof(data);
+		float nx, ny, nz;
+		float x, y, z;
+
+
+		for (unsigned int tr = 0; tr < nrTri; tr++)
+		{
+			short idx = 0;
+			input.read(data, sizeof(data));
+
+			for (unsigned int i = 0; i < 4; i++)
+			{
+				char val0[4] = { data[idx+0], data[idx+1], data[idx+2], data[idx+3] };
+				char val1[4] = { data[idx+4], data[idx+5], data[idx+6], data[idx+7] };
+				char val2[4] = { data[idx+8], data[idx+9], data[idx+10], data[idx+11] };
+
+				x = *((float*)val0);
+				y = *((float*)val1);
+				z = *((float*)val2);
+
+				if (i == 0) 
+				{
+					for (unsigned int j = 0; j < 3; j++)
+					{
+						mNormals.push_back(x);
+						mNormals.push_back(y);
+						mNormals.push_back(z);
+					}
+				}
+				else 
+				{
+					mVertices.push_back(x);
+					mVertices.push_back(y);
+					mVertices.push_back(z);
+				}
+
+				idx += 12;
+			}
+		}
+
+		input.close();
+		mNeedsMeshDataUpdate = true;
+	}
+
+
 
 	const int GraphicsEngine::GetHeight(void) { return m_height; }
 	const int GraphicsEngine::GetWidth(void) { return m_width; }

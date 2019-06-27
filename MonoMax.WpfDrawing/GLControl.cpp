@@ -16,81 +16,90 @@ namespace MonoMaxGraphics
 		_w = (int)info->NewSize.Width;
 		_h = (int)info->NewSize.Height;
 
-		if (!m_isInitialized)
+		if (!mIsInitialized)
 		{
-			m_graphicsEngine = new MonoMaxGraphics::GraphicsEngine();
-			m_canRender = true;
+			mGraphicsEngine = new MonoMaxGraphics::GraphicsEngine();
+			mGraphicsFramework = gcnew MonoMaxGraphics::GraphicFramework();
+			mGraphicsFramework->Init(mGraphicsEngine);
+			
+			mCanRender = true;
 
 			Grid^ mainGrid = gcnew Grid();
-			m_fpsCounter = gcnew TextBlock();
-			m_fpsCounter->Margin = Thickness(3);
-			m_fpsCounter->VerticalAlignment = System::Windows::VerticalAlignment::Bottom;
+			mFpsCounter = gcnew TextBlock();
+			mFpsCounter->Margin = Thickness(3);
+			mFpsCounter->VerticalAlignment = System::Windows::VerticalAlignment::Bottom;
 			
 
-			m_lastUpdate = System::DateTime::Now;
+			mLastUpdate = System::DateTime::Now;
 
-			m_ImageControl = gcnew Image();
-			m_ImageControl->RenderTransformOrigin = Point(0.5, 0.5);
-			m_ImageControl->RenderTransform = gcnew ScaleTransform(1.0, -1.0);
+			mImageControl = gcnew Image();
+			mImageControl->RenderTransformOrigin = Point(0.5, 0.5);
+			mImageControl->RenderTransform = gcnew ScaleTransform(1.0, -1.0);
 			
-			mainGrid->Children->Add(m_ImageControl);
-			mainGrid->Children->Add(m_fpsCounter);
+			mainGrid->Children->Add(mImageControl);
+			mainGrid->Children->Add(mFpsCounter);
 
 			AddChild(mainGrid);
 
-			System::Windows::Controls::Panel::SetZIndex(m_ImageControl, -1);
+			System::Windows::Controls::Panel::SetZIndex(mImageControl, -1);
 
-			m_cancelToken = gcnew CancellationTokenSource();
-			m_renderThread = gcnew Thread(gcnew ParameterizedThreadStart(this, &GLControl::RenderThreadLoop));
-			m_renderThread->IsBackground = true;
-			m_renderThread->Start(m_cancelToken);
+			mCancelToken = gcnew CancellationTokenSource();
+			mRenderThread = gcnew Thread(gcnew ParameterizedThreadStart(this, &GLControl::RenderThreadLoop));
+			mRenderThread->IsBackground = true;
+			mRenderThread->Start(mCancelToken);
 
 		}
 
-		m_writeableImg = gcnew WriteableBitmap(_w, _h, 96, 96, PixelFormats::Pbgra32, nullptr);
-		m_bufferPtr = (char*)m_writeableImg->BackBuffer.ToPointer();
-		m_ImageControl->Source = m_writeableImg;
+		mWriteableImg = gcnew WriteableBitmap(_w, _h, 96, 96, PixelFormats::Pbgra32, nullptr);
+		mBufferPtr = (char*)mWriteableImg->BackBuffer.ToPointer();
+		mImageControl->Source = mWriteableImg;
+	}
+
+	GraphicFramework^ GLControl::GetGfxFramework(void)
+	{
+		return mGraphicsFramework;
 	}
 
 	void GLControl::Terminate(void)
 	{
-		m_cancelToken->Cancel();
-		m_renderThread->Abort();
-		m_renderThread->Join();
+		mCancelToken->Cancel();
+		mRenderThread->Abort();
+		mRenderThread->Join();
 
-		delete m_graphicsEngine;
+		delete mGraphicsEngine;
+		delete mGraphicsFramework;
 	}
 
 	void GLControl::ChangeState(bool status)
 	{
-		m_canRender = status;
+		mCanRender = status;
 	}
 
 	void GLControl::UpdateImageData(void)
 	{
-		m_writeableImg->Lock();
-		m_writeableImg->AddDirtyRect(Int32Rect(0, 0, _w, _h));
-		m_writeableImg->Unlock();
+		mWriteableImg->Lock();
+		mWriteableImg->AddDirtyRect(Int32Rect(0, 0, _w, _h));
+		mWriteableImg->Unlock();
 	}
 
 	void GLControl::RenderThreadLoop(System::Object^ token)
 	{
-		m_graphicsEngine->Init(true);
-		m_isInitialized = true;
-		m_lastUpdate = System::DateTime::Now;
+		mGraphicsEngine->Init(true);
+		mIsInitialized = true;
+		mLastUpdate = System::DateTime::Now;
 
-		while (!m_cancelToken->IsCancellationRequested)
+		while (!mCancelToken->IsCancellationRequested)
 		{
-			if (m_canRender)
+			if (mCanRender)
 			{
 				if (_w != oldW || _h != oldH)
 				{
-					m_graphicsEngine->Resize(_w, _h);
+					mGraphicsEngine->Resize(_w, _h);
 					oldW = _w;
 					oldH = _h;
 				}
 
-				m_graphicsEngine->Render(m_bufferPtr);
+				mGraphicsEngine->Render(mBufferPtr);
 
 				//if ((System::DateTime::Now - m_lastUpdate).TotalMilliseconds >= 1000)
 				//{
@@ -100,7 +109,7 @@ namespace MonoMaxGraphics
 				//	_fps = 0;
 				//}
 
-				m_ImageControl->Dispatcher->BeginInvoke(gcnew System::Action(this, &GLControl::UpdateImageData));
+				mImageControl->Dispatcher->BeginInvoke(gcnew System::Action(this, &GLControl::UpdateImageData));
 
 				//_fps++;
 			}
@@ -109,21 +118,21 @@ namespace MonoMaxGraphics
 
 	void GLControl::UpdateFps(void)
 	{
-		m_fpsCounter->Text = _fps.ToString();
+		mFpsCounter->Text = _fps.ToString();
 	}
 
 	void GLControl::OnTick(System::Object^ sender, System::EventArgs^ e)
 	{
-		System::TimeSpan elapsed = (System::DateTime::Now - m_lastUpdate);
+		System::TimeSpan elapsed = (System::DateTime::Now - mLastUpdate);
 		if (elapsed.TotalMilliseconds >= 1000)
 		{
-			m_fpsCounter->Text = "FPS= " + _fps.ToString();
+			mFpsCounter->Text = "FPS= " + _fps.ToString();
 			_fps = 0;
-			m_lastUpdate = System::DateTime::Now;
+			mLastUpdate = System::DateTime::Now;
 		}
 
-		m_graphicsEngine->Render(m_bufferPtr);
-		m_ImageControl->Dispatcher->Invoke(gcnew System::Action(this, &GLControl::UpdateImageData));
+		mGraphicsEngine->Render(mBufferPtr);
+		mImageControl->Dispatcher->Invoke(gcnew System::Action(this, &GLControl::UpdateImageData));
 
 		_fps++;
 	}

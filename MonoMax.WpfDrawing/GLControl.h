@@ -1,4 +1,5 @@
 #pragma once
+#include "GraphicFramework.h"
 
 #pragma managed(push, off)
 #include "../MonoMax.EngineCore/Core.h"
@@ -9,20 +10,21 @@ namespace MonoMaxGraphics
 	public ref class GLControl : public System::Windows::Controls::UserControl
 	{
 	private:
-		bool m_isInitialized;
-		System::Threading::Thread^ m_renderThread;
-		System::Threading::CancellationTokenSource^ m_cancelToken;
-		System::Threading::ManualResetEvent^ m_manualReset;
+		bool mIsInitialized;
+		System::Threading::Thread^ mRenderThread;
+		System::Threading::CancellationTokenSource^ mCancelToken;
+		System::Threading::ManualResetEvent^ mManualReset;
 
-		MonoMaxGraphics::GraphicsEngine* m_graphicsEngine;
-		System::Windows::Controls::TextBlock^ m_fpsCounter;
-		System::DateTime m_lastUpdate;
+		GraphicFramework^ mGraphicsFramework;
+		GraphicsEngine* mGraphicsEngine;
+		System::Windows::Controls::TextBlock^ mFpsCounter;
+		System::DateTime mLastUpdate;
 
-		char* m_bufferPtr;
-		bool m_canRender;
+		char* mBufferPtr;
+		bool mCanRender;
 		
-		System::Windows::Controls::Image^ m_ImageControl;
-		System::Windows::Media::Imaging::WriteableBitmap^ m_writeableImg;
+		System::Windows::Controls::Image^ mImageControl;
+		System::Windows::Media::Imaging::WriteableBitmap^ mWriteableImg;
 
 		void OnTick(System::Object^ sender, System::EventArgs^ e);
 		void UpdateImageData();
@@ -32,6 +34,8 @@ namespace MonoMaxGraphics
 	protected:
 
 	public:
+		GraphicFramework^ GetGfxFramework(void);
+
 		void Terminate(void);
 		void ChangeState(bool status);
 

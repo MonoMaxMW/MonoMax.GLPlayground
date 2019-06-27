@@ -14,6 +14,9 @@ namespace MonoMaxGraphics
 		glm::mat4 mProjMat;
 		glm::mat4 mViewMat;
 		glm::mat4 mModlMat;
+		std::vector<float> mVertices;
+		std::vector<float> mNormals;
+		bool mNeedsMeshDataUpdate;
 
 		ShaderManger* mShaderManager;
 
@@ -27,6 +30,7 @@ namespace MonoMaxGraphics
 		void initWindow(bool invisibleWindow);
 		void initRenderData(void);
 		void initShaders(void);
+		void updateMeshData(void);
 
 	public:
 
@@ -38,6 +42,7 @@ namespace MonoMaxGraphics
 		void Resize(int width, int height);
 		void Stop(void);
 		void Render(char* imgBuffer);
+		void AddMesh(const char* filename);
 	};
 }
 

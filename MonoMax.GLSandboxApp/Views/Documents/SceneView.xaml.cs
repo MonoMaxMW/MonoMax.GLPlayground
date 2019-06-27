@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using MonoMax.CPQ.ViewModels.Documents;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,17 @@ namespace MonoMax.CPQ.Views.Documents
         public SceneView()
         {
             InitializeComponent();
+        }
+
+        private void GLControl_Initialized(object sender, EventArgs e)
+        {
+            var vm = DataContext as SceneViewModel;
+
+            if (vm != null)
+            {
+                vm.GfxFramework = GLControl.GetGfxFramework();
+            }
+
         }
     }
 }

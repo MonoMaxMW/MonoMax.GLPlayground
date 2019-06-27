@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="GLControl.cpp" />
+    <ClCompile Include="GraphicFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -148,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLControl.h" />
+    <ClInclude Include="GraphicFramework.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MonoMax.EngineCore\MonoMax.GLPlayground.vcxproj">

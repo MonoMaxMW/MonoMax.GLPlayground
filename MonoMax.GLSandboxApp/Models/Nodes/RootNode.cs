@@ -12,5 +12,7 @@ namespace MonoMax.CPQ.Models.Nodes
         {
             Name = "Root";
         }
+
+        public override NodeType NodeType => NodeType.Root;
     }
 }

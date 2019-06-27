@@ -9,5 +9,6 @@ namespace MonoMax.CPQ.Models.Nodes
     public class TextNode : Node
     {
         public override bool CanBeEdited => true;
+        public override NodeType NodeType => NodeType.Text;
     }
 }

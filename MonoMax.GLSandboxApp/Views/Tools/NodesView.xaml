@@ -39,8 +39,12 @@
         </TreeView.InputBindings>
         <TreeView.ItemTemplate>
             <HierarchicalDataTemplate DataType="{x:Type TreeViewItem}" ItemsSource="{Binding ChildNodes}">
-                <Border Margin="2" x:Name="bd" Tag="{Binding Name}">
-                    <ContentPresenter Content="{Binding}">
+                <DockPanel x:Name="bd">
+                    <Border x:Name="typeBd" Width="10" Height="5" Margin="2"
+                            Background="{Binding Converter={StaticResource NodeTypeBackgroundConverter}}">
+                        
+                    </Border>
+                    <ContentPresenter Margin="2" Content="{Binding}">
                         <ContentPresenter.Style>
                             <Style TargetType="{x:Type ContentPresenter}">
                                 <Setter Property="ContentTemplate" Value="{StaticResource NormalTemplate}" />
@@ -52,7 +56,7 @@
                             </Style>
                         </ContentPresenter.Style>
                     </ContentPresenter>
-                </Border>
+                </DockPanel>
             </HierarchicalDataTemplate>
         </TreeView.ItemTemplate>
         <TreeView.ItemContainerStyle>
