@@ -3,10 +3,13 @@
 #include "opengl.h"
 #include "ShaderPrg.h"
 #include "ShaderManger.h"
-
+#include "TrackballControls.h"
+#include "Arcball.h"
+#include "Trackball.h"
 
 namespace MonoMaxGraphics
 {
+
 	class GraphicsEngine
 	{
 
@@ -30,10 +33,14 @@ namespace MonoMaxGraphics
 		void initWindow(bool invisibleWindow);
 		void initRenderData(void);
 		void initShaders(void);
+		void update(void);
+		void updateObjects(void);
 		void updateMeshData(void);
+		void draw(void);
+		void drawObjects(void);
+		void drawBackground(void);
 
 	public:
-
 		char* GLRenderHandle;
 		const int GetWidth(void);
 		const int GetHeight(void);
@@ -41,8 +48,14 @@ namespace MonoMaxGraphics
 		void DeInit(void);
 		void Resize(int width, int height);
 		void Stop(void);
-		void Render(char* imgBuffer);
+		void Mainloop(char* imgBuffer);
 		void AddMesh(const char* filename);
+		void MouseMove(const int x, const int y);
+		void MouseDown(const int x, const int y, const int button);
+		void MouseUp(void);
+		void MouseScroll(const int x, const int y, const int delta);
+
+		GLFWwindow* GetWindow(void);
 	};
 }
 

@@ -193,7 +193,6 @@
       <Name>MonoMax.MonoMaxGraphics</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Page Include="Views\Documents\SceneView.xaml">
       <SubType>Designer</SubType>

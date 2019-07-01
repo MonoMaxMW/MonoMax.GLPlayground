@@ -41,6 +41,10 @@ namespace MonoMaxGraphics
 
 		// overrides
 		void OnRenderSizeChanged(System::Windows::SizeChangedInfo^ info) override;
+		void OnMouseDown(System::Windows::Input::MouseButtonEventArgs^ e) override;
+		void OnMouseUp(System::Windows::Input::MouseButtonEventArgs^ e) override;
+		void OnMouseMove(System::Windows::Input::MouseEventArgs^ e) override;
+		void OnMouseWheel(System::Windows::Input::MouseWheelEventArgs^ e) override;
 	};
 }
 

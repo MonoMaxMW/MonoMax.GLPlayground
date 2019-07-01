@@ -55,6 +55,7 @@ namespace MonoMaxGraphics
 		mImageControl->Source = mWriteableImg;
 	}
 
+
 	GraphicFramework^ GLControl::GetGfxFramework(void)
 	{
 		return mGraphicsFramework;
@@ -99,7 +100,7 @@ namespace MonoMaxGraphics
 					oldH = _h;
 				}
 
-				mGraphicsEngine->Render(mBufferPtr);
+				mGraphicsEngine->Mainloop(mBufferPtr);
 
 				//if ((System::DateTime::Now - m_lastUpdate).TotalMilliseconds >= 1000)
 				//{
@@ -131,10 +132,55 @@ namespace MonoMaxGraphics
 			mLastUpdate = System::DateTime::Now;
 		}
 
-		mGraphicsEngine->Render(mBufferPtr);
+		mGraphicsEngine->Mainloop(mBufferPtr);
 		mImageControl->Dispatcher->Invoke(gcnew System::Action(this, &GLControl::UpdateImageData));
 
 		_fps++;
+	}
+
+
+	void GLControl::OnMouseDown(System::Windows::Input::MouseButtonEventArgs^ e)
+	{
+		int btnId = -1;
+		int x, y;
+
+		x = (int)e->GetPosition(this).X;
+		y = (int)e->GetPosition(this).Y;
+
+
+		if (e->ChangedButton == System::Windows::Input::MouseButton::Left)
+		{
+			btnId = 1;
+		}
+		else if (e->ChangedButton == System::Windows::Input::MouseButton::Right)
+		{
+			btnId = 2;
+		}
+
+		mGraphicsFramework->MouseDown(btnId, x, y);
+	}
+
+	void GLControl::OnMouseUp(System::Windows::Input::MouseButtonEventArgs^ e)
+	{
+		mGraphicsFramework->MouseUp();
+	}
+
+	void GLControl::OnMouseMove(System::Windows::Input::MouseEventArgs^ e)
+	{
+		int x, y;
+		x = (int)e->GetPosition(this).X;
+		y = (int)e->GetPosition(this).Y;
+
+		mGraphicsFramework->MouseMove(x, y);
+	}
+
+	void GLControl::OnMouseWheel(System::Windows::Input::MouseWheelEventArgs^ e)
+	{
+		int x, y;
+		x = e->GetPosition(this).X;
+		y = e->GetPosition(this).Y;
+
+		mGraphicsFramework->MouseScroll(x, y, e->Delta);
 	}
 }
 

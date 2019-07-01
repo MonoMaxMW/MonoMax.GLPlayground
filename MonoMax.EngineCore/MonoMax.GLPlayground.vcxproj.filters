@@ -9,6 +9,12 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Header Files\Camera">
+      <UniqueIdentifier>{75fbfd5d-40a2-4d38-94a6-0813876cc6d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Camera">
+      <UniqueIdentifier>{709b7b7b-2164-478b-9811-18ddd46a13f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraphicsEngine.cpp">
@@ -22,6 +28,15 @@
     </ClCompile>
     <ClCompile Include="ShaderManger.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrackballControls.cpp">
+      <Filter>Source Files\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Arcball.cpp">
+      <Filter>Source Files\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Trackball.cpp">
+      <Filter>Source Files\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +66,18 @@
     </ClInclude>
     <ClInclude Include="io.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TrackballControls.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Arcball.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="common_math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Trackball.h">
+      <Filter>Header Files\Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

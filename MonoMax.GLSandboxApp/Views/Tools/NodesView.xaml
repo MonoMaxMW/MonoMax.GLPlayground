@@ -9,7 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="400"
              x:Name="uc">
-    <TreeView x:Name="treeview" Background="Transparent" BorderThickness="0"
+    <TreeView x:Name="treeview" Background="Transparent"  BorderThickness="0"
               ItemsSource="{Binding NodeManager}"
               SelectedItemChanged="Treeview_SelectedItemChanged">
         <TreeView.Resources>

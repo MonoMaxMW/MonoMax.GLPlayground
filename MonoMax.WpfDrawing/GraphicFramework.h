@@ -18,6 +18,10 @@ namespace MonoMaxGraphics
 
 	public:
 		void AddMesh(System::String^ filename);
+		void MouseUp(void);
+		void MouseDown(const int button, const int xPos, const int yPos);
+		void MouseMove(const int xPos, const int yPos);
+		void MouseScroll(const int xPos, const int yPos, const int delta);
 
 	};
 }

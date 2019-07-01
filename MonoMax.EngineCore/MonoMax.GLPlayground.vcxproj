@@ -161,12 +161,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\shared libaries\glad\src\glad.c" />
+    <ClCompile Include="Arcball.cpp" />
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="ShaderManger.cpp" />
     <ClCompile Include="ShaderPrg.cpp" />
+    <ClCompile Include="Trackball.cpp" />
+    <ClCompile Include="TrackballControls.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Arcball.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="common_math.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="math.h" />
@@ -175,6 +180,8 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShaderManger.h" />
     <ClInclude Include="ShaderPrg.h" />
+    <ClInclude Include="Trackball.h" />
+    <ClInclude Include="TrackballControls.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

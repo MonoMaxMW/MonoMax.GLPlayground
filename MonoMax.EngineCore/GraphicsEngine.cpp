@@ -6,6 +6,23 @@
 
 namespace MonoMaxGraphics
 {
+	enum MouseState
+	{
+		Release,
+		Press
+	};
+
+
+	char* _imgBuffer;
+	MouseState _lMs;
+	MouseState _rMs;
+	MouseState _mMs;
+
+	Camera3D* _camera;
+	TrackballControls* _tCtrls;
+	Arcball* _arcball;
+	Trackball _trackball;
+
 	std::string GraphicsEngine::getShaderCode(const char* filename)
 	{
 		std::string shaderCode;
@@ -44,23 +61,9 @@ namespace MonoMaxGraphics
 			simple->AddVariable("uModlMat");
 			simple->AddVariable("uViewMat");
 			simple->AddVariable("uProjMat");
+			simple->AddVariable("uItemColor");
 		}
 		mShaderManager->AddShaderPrg(simple);
-
-		mNeedsMeshDataUpdate = true;
-
-		mVertices.push_back(0.0f);
-		mVertices.push_back(0.5f);
-		mVertices.push_back(0.0f);
-
-		mVertices.push_back(-0.5f);
-		mVertices.push_back(-0.5f);
-		mVertices.push_back(0.0f);
-
-		mVertices.push_back(0.5f);
-		mVertices.push_back(-0.5f);
-		mVertices.push_back(0.0f);
-
 	}
 
 	void GraphicsEngine::updateMeshData(void)
@@ -71,7 +74,7 @@ namespace MonoMaxGraphics
 		glBindVertexArray(mVao);
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-			glBufferData(GL_ARRAY_BUFFER, mVertices.size(), &mVertices, GL_STATIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), &mVertices[0], GL_STATIC_DRAW);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
@@ -80,13 +83,30 @@ namespace MonoMaxGraphics
 		mNeedsMeshDataUpdate = false;
 	}
 
-	void GraphicsEngine::Render(char* imgBuffer)
+
+
+	void GraphicsEngine::updateObjects(void)
+	{
+		_tCtrls->Update();
+		_arcball->Update();
+	}
+
+	void GraphicsEngine::update(void)
 	{
 		updateMeshData();
+		updateObjects();
+	}
 
-
-		glClearColor(0.8f, 0.8f, 0.6f, 1.0f);
+	void GraphicsEngine::drawBackground(void)
+	{
+		glClearColor(0.0f, 0.6f, 0.8f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void GraphicsEngine::drawObjects(void)
+	{
+		if (mVertices.size() == 0)
+			return;
 
 		glEnable(GL_MULTISAMPLE);
 
@@ -94,22 +114,45 @@ namespace MonoMaxGraphics
 
 		glBindVertexArray(mVao);
 		{
+			glEnableVertexAttribArray(0);
 			glUseProgram(prg->GetId());
 
 			glUniformMatrix4fv((*prg)["uModlMat"], 1, GL_FALSE, glm::value_ptr(mModlMat));
-			glUniformMatrix4fv((*prg)["uViewMat"], 1, GL_FALSE, glm::value_ptr(mViewMat));
+			glUniformMatrix4fv((*prg)["uViewMat"], 1, GL_FALSE, glm::value_ptr(_arcball->GetMatrix()));
 			glUniformMatrix4fv((*prg)["uProjMat"], 1, GL_FALSE, glm::value_ptr(mProjMat));
 
-			glEnableVertexAttribArray(0);
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+			glUniform3f((*prg)["uItemColor"], 1.0f, 0.0f, 0.0f);
+
+			glDrawArrays(GL_TRIANGLES, 0, (GLuint)mVertices.size());
+
+			glUniform3f((*prg)["uItemColor"], 1.0f, 1.0f, 1.0f);
+			glDrawArrays(GL_LINES, 0, (GLuint)mVertices.size());
 		}
 		glBindVertexArray(0);
 
-		if(imgBuffer != nullptr)
-			glReadPixels(0, 0, m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, imgBuffer);
+	}
 
-		glfwSwapBuffers(mWindow);
+	void GraphicsEngine::draw(void)
+	{
+		drawBackground();
+		drawObjects();
+
+		if (_imgBuffer != nullptr)
+			glReadPixels(0, 0, m_width, m_height, GL_BGRA, GL_UNSIGNED_BYTE, _imgBuffer);
+
+	}
+
+	void GraphicsEngine::Mainloop(char* imgBuffer)
+	{
+		_imgBuffer = imgBuffer;
+
+		update();
+		draw();
+
+
+
 		glfwPollEvents();
+		glfwSwapBuffers(mWindow);
 	}
 
 	void GraphicsEngine::AddMesh(const char* filename)
@@ -172,9 +215,6 @@ namespace MonoMaxGraphics
 
 
 
-	const int GraphicsEngine::GetHeight(void) { return m_height; }
-	const int GraphicsEngine::GetWidth(void) { return m_width; }
-
 	void GraphicsEngine::initWindow(bool invisibleWindow)
 	{
 		if (!glfwInit())
@@ -187,7 +227,7 @@ namespace MonoMaxGraphics
 		if(invisibleWindow)
 			glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
-		//glfwWindowHint(GLFW_SAMPLES, 4);
+		glfwWindowHint(GLFW_SAMPLES, 4);
 
 		mWindow = glfwCreateWindow(640, 480, "Hidden OpenGL window", NULL, NULL);
 
@@ -203,6 +243,11 @@ namespace MonoMaxGraphics
 			glfwTerminate();
 			throw std::exception();
 		}
+
+		_camera = new MonoMaxGraphics::Camera3D(glm::vec3(0.0f, 0.0f, 200.0f));
+		_tCtrls = new MonoMaxGraphics::TrackballControls(_camera, 640, 480);
+		_arcball = new MonoMaxGraphics::Arcball();
+
 	}
 
 	void GraphicsEngine::initRenderData(void)
@@ -228,13 +273,24 @@ namespace MonoMaxGraphics
 		mProjMat = glm::perspective(
 			glm::radians(60.0f),
 			(float)width / height,
-			0.01f,
-			100.0f);
-
-		mViewMat = glm::lookAt(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			10.0f,
+			100000.0f);
 
 		glViewport(0, 0, width, height);
+		_tCtrls->SetSize(width, height);
+		
 
+		_arcball->Resize(width, height);
+	}
+
+
+	const int GraphicsEngine::GetHeight(void) { return m_height; }
+	const int GraphicsEngine::GetWidth(void) { return m_width; }
+
+
+	GLFWwindow* GraphicsEngine::GetWindow(void)
+	{
+		return mWindow;
 	}
 
 	void GraphicsEngine::Init(bool offscreen)
@@ -257,4 +313,39 @@ namespace MonoMaxGraphics
 		isRunning = false;
 	}
 
+	void GraphicsEngine::MouseDown(const int x, const int y, const int button)
+	{
+		switch (button)
+		{
+		case 1: _lMs = MouseState::Press; 
+			break;
+
+		case 2: _rMs = MouseState::Press;
+			break;
+
+		case 3: _mMs = MouseState::Press;
+			break;
+		}
+
+		_tCtrls->MouseDown(button, x, y);
+		_arcball->MouseDown(x, y);
+	}
+
+	void GraphicsEngine::MouseUp(void)
+	{
+		_tCtrls->MouseUp();
+		_arcball->MouseUp();
+	}
+
+
+	void GraphicsEngine::MouseMove(const int x, const int y)
+	{
+		_tCtrls->MouseMove(x, y);
+		_arcball->MouseMove(x, y);
+	}
+
+	void GraphicsEngine::MouseScroll(const int x, const int y, const int delta)
+	{
+
+	}
 }
