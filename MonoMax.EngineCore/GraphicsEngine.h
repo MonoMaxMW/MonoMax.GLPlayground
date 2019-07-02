@@ -4,6 +4,7 @@
 #include "ShaderPrg.h"
 #include "ShaderManger.h"
 #include "Arcball.h"
+#include "NodeManager.h"
 
 namespace MonoMaxEngine
 {
@@ -18,6 +19,7 @@ namespace MonoMaxEngine
 		std::vector<float> mNormals;
 		bool mNeedsMeshDataUpdate;
 
+		NodeManager* mNodeManager;
 		ShaderManger* mShaderManager;
 
 		int mBufferLength;
@@ -44,7 +46,7 @@ namespace MonoMaxEngine
 		const int GetWidth(void);
 		const int GetHeight(void);
 		void Init(bool offscreen);
-		void DeInit(void);
+		void Terminate(void);
 		void Resize(int width, int height);
 		void Stop(void);
 		void Mainloop(char* imgBuffer);

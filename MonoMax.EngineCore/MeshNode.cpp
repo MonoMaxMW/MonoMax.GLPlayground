@@ -2,7 +2,10 @@
 
 namespace MonoMaxEngine
 {
-	MeshNode::MeshNode(const unsigned int startIndex, const int count)
+	MeshNode::MeshNode(
+		const unsigned int startIndex, 
+		const unsigned int count,
+		const unsigned int sessionId)
 	{
 		mStartIndex = startIndex;
 		mCount = count;
@@ -10,6 +13,13 @@ namespace MonoMaxEngine
 		mScale = vec3(1.0f);
 		mNeedsUpdate = true;
 		mMatrix = mat4(1.0f);
+		mColor = vec3(0.5f);
+		mSessionId = sessionId;
+	}
+
+	vec3& MeshNode::GetColor(void)
+	{
+		return mColor;
 	}
 
 	vec3& MeshNode::GetPos(void)
@@ -27,6 +37,11 @@ namespace MonoMaxEngine
 		return mMatrix;
 	}
 
+	unsigned int& MeshNode::GetSessionId(void)
+	{
+		return mSessionId;
+	}
+
 	void MeshNode::SetPos(vec3 newPos)
 	{
 		mPos = newPos;
@@ -42,6 +57,11 @@ namespace MonoMaxEngine
 	{
 		mScale = newScale;
 		mNeedsUpdate = true;
+	}
+
+	void MeshNode::SetColor(const vec3 newColor)
+	{
+		mColor = newColor;
 	}
 
 	void MeshNode::Update(void)

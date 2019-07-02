@@ -97,10 +97,8 @@ namespace MonoMaxEngine
 
 	void GraphicsEngine::initShaders(void)
 	{
-		mShaderManager = new ShaderManger();
 		mShaderManager->AddShaderPrg(createSimpleColorPrg());
 		mShaderManager->AddShaderPrg(createBasicLightPrg());
-
 		activePrg = mShaderManager->GetShaderPrg("SimpleLight");
 	}
 
@@ -139,6 +137,7 @@ namespace MonoMaxEngine
 
 	void GraphicsEngine::updateObjects(void)
 	{
+		mNodeManager->Update();
 		_arcball->Update();
 		_arcballPos = _arcball->GetTransformedPos();
 	}
@@ -260,6 +259,8 @@ namespace MonoMaxEngine
 			}
 		}
 
+		mNodeManager->AddMeshNode(beginCount, beginCount);
+
 		beginCount += nrTri * 3;
 
 		input.close();
@@ -344,17 +345,20 @@ namespace MonoMaxEngine
 
 	void GraphicsEngine::Init(bool offscreen)
 	{
+		mShaderManager = new ShaderManger();
+		mNodeManager = new NodeManager();
+
 		initWindow(offscreen);
 		initRenderData();
 		initShaders();
 	}
 
-	void GraphicsEngine::DeInit(void)
+	void GraphicsEngine::Terminate(void)
 	{
 		glfwTerminate();
 
-		delete mWindow;
 		delete mShaderManager;
+		delete mNodeManager;
 	}
 
 	void GraphicsEngine::Stop(void)
