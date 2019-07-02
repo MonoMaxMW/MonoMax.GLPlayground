@@ -15,6 +15,12 @@
     <Filter Include="Source Files\Camera">
       <UniqueIdentifier>{709b7b7b-2164-478b-9811-18ddd46a13f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Nodes">
+      <UniqueIdentifier>{8ef1f1a0-8dcf-4438-a831-8ce8f33c54c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Nodes">
+      <UniqueIdentifier>{5e3b787f-b750-419a-b845-65ea7ee282f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraphicsEngine.cpp">
@@ -29,14 +35,11 @@
     <ClCompile Include="ShaderManger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TrackballControls.cpp">
-      <Filter>Source Files\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="Arcball.cpp">
       <Filter>Source Files\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Trackball.cpp">
-      <Filter>Source Files\Camera</Filter>
+    <ClCompile Include="MeshNode.cpp">
+      <Filter>Source Files\Nodes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -67,17 +70,14 @@
     <ClInclude Include="io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TrackballControls.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="Arcball.h">
       <Filter>Header Files\Camera</Filter>
     </ClInclude>
     <ClInclude Include="common_math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Trackball.h">
-      <Filter>Header Files\Camera</Filter>
+    <ClInclude Include="MeshNode.h">
+      <Filter>Header Files\Nodes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

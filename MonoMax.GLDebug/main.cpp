@@ -41,6 +41,14 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
+	int delta = 0;
+
+	if (yoffset < 0.0)
+		delta = -1;
+	else
+		delta = 1;
+
+	engine->MouseScroll(delta);
 }
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)

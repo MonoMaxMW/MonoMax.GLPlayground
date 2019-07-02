@@ -18,12 +18,14 @@ namespace MonoMaxGraphics
 	MouseState _rMs;
 	MouseState _mMs;
 
-	Camera3D* _camera;
-	TrackballControls* _tCtrls;
 	Arcball* _arcball;
-	Trackball _trackball;
+	GLuint beginIdx, meshCount;
+	unsigned long beginCount = 0;
+	glm::vec3 _arcballPos;
+	GLuint vao, vboP, vboN;
+	ShaderPrg* activePrg;
 
-	std::string GraphicsEngine::getShaderCode(const char* filename)
+	std::string getShaderCode(const char* filename)
 	{
 		std::string shaderCode;
 		std::ifstream file(filename, std::ios::in);
@@ -42,28 +44,69 @@ namespace MonoMaxGraphics
 		return shaderCode;
 	}
 
-	void GraphicsEngine::initShaders(void)
+	ShaderPrg* createSimpleColorPrg(void)
 	{
-		mShaderManager = new ShaderManger();
-
-		ShaderPrg* simple = new ShaderPrg();
-		simple->Create("SimpleShader");
+		ShaderPrg* prg = new ShaderPrg();
+		prg->Create("SimpleShader");
 
 		std::string shaderCode[] =
 		{
 			getShaderCode("C:/DEV/shaders/simple_color_vs.glsl"),
 			getShaderCode("C:/DEV/shaders/simple_color_fs.glsl")
 		};
-		simple->AddShader(GL_VERTEX_SHADER, shaderCode[0]);
-		simple->AddShader(GL_FRAGMENT_SHADER, shaderCode[1]);
-		simple->Compile();
+		prg->AddShader(GL_VERTEX_SHADER, shaderCode[0]);
+		prg->AddShader(GL_FRAGMENT_SHADER, shaderCode[1]);
+		prg->Compile();
 		{
-			simple->AddVariable("uModlMat");
-			simple->AddVariable("uViewMat");
-			simple->AddVariable("uProjMat");
-			simple->AddVariable("uItemColor");
+			prg->AddVar("aPos");
+			prg->AddVar("uModlMat");
+			prg->AddVar("uViewMat");
+			prg->AddVar("uProjMat");
+			prg->AddVar("uItemColor");
 		}
-		mShaderManager->AddShaderPrg(simple);
+
+		return prg;
+	}
+
+	ShaderPrg* createBasicLightPrg(void)
+	{
+		ShaderPrg* prg = new ShaderPrg();
+		prg->Create("SimpleLight");
+
+		std::string shaderCode[] =
+		{
+			getShaderCode("C:/DEV/shaders/basic_light_vs.glsl"),
+			getShaderCode("C:/DEV/shaders/basic_light_fs.glsl")
+		};
+		prg->AddShader(GL_VERTEX_SHADER, shaderCode[0]);
+		prg->AddShader(GL_FRAGMENT_SHADER, shaderCode[1]);
+		prg->Compile();
+		{
+			prg->AddVar("aPos");
+			prg->AddVar("aNormal");
+			prg->AddVar("uModlMat");
+			prg->AddVar("uViewMat");
+			prg->AddVar("uProjMat");
+			prg->AddVar("uItemColor");
+			prg->AddVar("uViewPos");
+			prg->AddVar("uLightPos");
+		}
+
+		return prg;
+	}
+
+	void GraphicsEngine::initShaders(void)
+	{
+		mShaderManager = new ShaderManger();
+		mShaderManager->AddShaderPrg(createSimpleColorPrg());
+		mShaderManager->AddShaderPrg(createBasicLightPrg());
+
+		activePrg = mShaderManager->GetShaderPrg("SimpleLight");
+	}
+
+	void GraphicsEngine::initDefaultObjects(void)
+	{
+
 	}
 
 	void GraphicsEngine::updateMeshData(void)
@@ -71,13 +114,22 @@ namespace MonoMaxGraphics
 		if (!mNeedsMeshDataUpdate || mVertices.size() == 0)
 			return;
 
-		glBindVertexArray(mVao);
+		meshCount = (GLuint)mVertices.size() / 3;
+
+		glBindVertexArray(vao);
 		{
-			glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-			glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), &mVertices[0], GL_STATIC_DRAW);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, vboP);
+			glBufferData(GL_ARRAY_BUFFER, mVertices.size() * sizeof(float), &mVertices.front(), GL_STATIC_DRAW);
+			glVertexAttribPointer(activePrg->GetVar("aPos"), 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glEnableVertexAttribArray(activePrg->GetVar("aPos"));
+
+			glBindBuffer(GL_ARRAY_BUFFER, vboN);
+			glBufferData(GL_ARRAY_BUFFER, mNormals.size() * sizeof(float), &mNormals.front(), GL_STATIC_DRAW);
+			glVertexAttribPointer(activePrg->GetVar("aNormal"), 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+			glEnableVertexAttribArray(activePrg->GetVar("aNormal"));
+
 		}
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
 		mNeedsMeshDataUpdate = false;
@@ -87,8 +139,8 @@ namespace MonoMaxGraphics
 
 	void GraphicsEngine::updateObjects(void)
 	{
-		_tCtrls->Update();
 		_arcball->Update();
+		_arcballPos = _arcball->GetTransformedPos();
 	}
 
 	void GraphicsEngine::update(void)
@@ -108,28 +160,29 @@ namespace MonoMaxGraphics
 		if (mVertices.size() == 0)
 			return;
 
+		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
 
-		ShaderPrg* prg = mShaderManager->GetShaderPrg("SimpleShader");
-
-		glBindVertexArray(mVao);
+		glBindVertexArray(vao);
 		{
-			glEnableVertexAttribArray(0);
-			glUseProgram(prg->GetId());
+			//glEnableVertexAttribArray(activePrg->GetVar("aPos"));
+			glUseProgram(activePrg->GetId());
 
-			glUniformMatrix4fv((*prg)["uModlMat"], 1, GL_FALSE, glm::value_ptr(mModlMat));
-			glUniformMatrix4fv((*prg)["uViewMat"], 1, GL_FALSE, glm::value_ptr(_arcball->GetMatrix()));
-			glUniformMatrix4fv((*prg)["uProjMat"], 1, GL_FALSE, glm::value_ptr(mProjMat));
+			glUniformMatrix4fv(activePrg->GetVar("uModlMat"), 1, GL_FALSE, glm::value_ptr(mModlMat));
+			glUniformMatrix4fv(activePrg->GetVar("uViewMat"), 1, GL_FALSE, glm::value_ptr(_arcball->GetMatrix()));
+			glUniformMatrix4fv(activePrg->GetVar("uProjMat"), 1, GL_FALSE, glm::value_ptr(mProjMat));
 
-			glUniform3f((*prg)["uItemColor"], 1.0f, 0.0f, 0.0f);
-
-			glDrawArrays(GL_TRIANGLES, 0, (GLuint)mVertices.size());
-
-			glUniform3f((*prg)["uItemColor"], 1.0f, 1.0f, 1.0f);
-			glDrawArrays(GL_LINES, 0, (GLuint)mVertices.size());
+			glUniform3f(activePrg->GetVar("uItemColor"), 1.0f, 0.0f, 0.0f);
+			glUniform3f(activePrg->GetVar("uViewPos"), _arcballPos.x, _arcballPos.y, _arcballPos.z);
+			glUniform3f(activePrg->GetVar("uLightPos"), _arcballPos.x, _arcballPos.y, _arcballPos.z);
+			glDrawArrays(GL_TRIANGLES, 0, meshCount);
 		}
 		glBindVertexArray(0);
 
+	}
+
+	void GraphicsEngine::drawDefaultObjects(void)
+	{
 	}
 
 	void GraphicsEngine::draw(void)
@@ -170,9 +223,7 @@ namespace MonoMaxGraphics
 
 		char data[4 * 3 + 4 * 3 * 3 + 2];
 		int sz = sizeof(data);
-		float nx, ny, nz;
 		float x, y, z;
-
 
 		for (unsigned int tr = 0; tr < nrTri; tr++)
 		{
@@ -209,6 +260,8 @@ namespace MonoMaxGraphics
 			}
 		}
 
+		beginCount += nrTri * 3;
+
 		input.close();
 		mNeedsMeshDataUpdate = true;
 	}
@@ -244,16 +297,15 @@ namespace MonoMaxGraphics
 			throw std::exception();
 		}
 
-		_camera = new MonoMaxGraphics::Camera3D(glm::vec3(0.0f, 0.0f, 200.0f));
-		_tCtrls = new MonoMaxGraphics::TrackballControls(_camera, 640, 480);
 		_arcball = new MonoMaxGraphics::Arcball();
 
 	}
 
 	void GraphicsEngine::initRenderData(void)
 	{
-		glGenVertexArrays(1, &mVao);
-		glGenBuffers(1, &mVbo);
+		glGenVertexArrays(1, &vao);
+		glGenBuffers(1, &vboP);
+		glGenBuffers(1, &vboN);
 	}
 
 
@@ -277,9 +329,6 @@ namespace MonoMaxGraphics
 			100000.0f);
 
 		glViewport(0, 0, width, height);
-		_tCtrls->SetSize(width, height);
-		
-
 		_arcball->Resize(width, height);
 	}
 
@@ -327,25 +376,22 @@ namespace MonoMaxGraphics
 			break;
 		}
 
-		_tCtrls->MouseDown(button, x, y);
-		_arcball->MouseDown(x, y);
+		_arcball->MouseDown(button, x, y);
 	}
 
 	void GraphicsEngine::MouseUp(void)
 	{
-		_tCtrls->MouseUp();
 		_arcball->MouseUp();
 	}
 
 
 	void GraphicsEngine::MouseMove(const int x, const int y)
 	{
-		_tCtrls->MouseMove(x, y);
 		_arcball->MouseMove(x, y);
 	}
 
-	void GraphicsEngine::MouseScroll(const int x, const int y, const int delta)
+	void GraphicsEngine::MouseScroll(const int delta)
 	{
-
+		_arcball->MouseScroll(delta);
 	}
 }

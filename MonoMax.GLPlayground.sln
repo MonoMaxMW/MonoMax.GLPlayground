@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoMax.CPQ", "MonoMax.GLSa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{4243089A-1705-4C60-87E5-55BB47A863F9}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\shaders\basic_light_fs.glsl = ..\..\shaders\basic_light_fs.glsl
+		..\..\shaders\basic_light_vs.glsl = ..\..\shaders\basic_light_vs.glsl
+		..\..\shaders\gradient_bgr_fs.glsl = ..\..\shaders\gradient_bgr_fs.glsl
+		..\..\shaders\gradient_bgr_vs.glsl = ..\..\shaders\gradient_bgr_vs.glsl
 		..\..\shaders\simple_color_fs.glsl = ..\..\shaders\simple_color_fs.glsl
 		..\..\shaders\simple_color_vs.glsl = ..\..\shaders\simple_color_vs.glsl
 	EndProjectSection

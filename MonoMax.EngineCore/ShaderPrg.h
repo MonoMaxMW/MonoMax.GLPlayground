@@ -19,12 +19,13 @@ namespace MonoMaxGraphics
 		~ShaderPrg();
 		void Create(const char*);
 		void AddShader(GLenum shadertype, const std::string code);
-		void AddVariable(const char* variable);
-		GLint operator[] (const char* variable);
+		void AddVar(const char* variable);
 		bool IsCompiled(void);
 		void Compile(void);
 		const char* GetName();
 		GLuint& GetId(void);
+		GLuint GetVar(const char* variable) const;
+		GLint operator[] (const char* variable) const;
 	};
 }
 

@@ -15,7 +15,7 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-        <gl:GLControl x:Name="GLControl" Loaded="GLControl_Initialized">
+        <gl:GLControl x:Name="GLControl" Loaded="GLControl_Initialized" Unloaded="GLControl_Unloaded" >
 
         </gl:GLControl>
     </Grid>

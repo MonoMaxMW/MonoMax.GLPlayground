@@ -37,5 +37,10 @@ namespace MonoMax.CPQ.Views.Documents
             }
 
         }
+
+        private void GLControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

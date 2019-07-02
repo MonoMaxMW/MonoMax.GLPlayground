@@ -40,6 +40,6 @@ namespace MonoMaxGraphics
 	void GraphicFramework::MouseScroll(const int xPos, const int yPos, const int delta)
 	{
 		if (mEngine != nullptr)
-			mEngine->MouseScroll(xPos, yPos, delta);
+			mEngine->MouseScroll(delta);
 	}
 }

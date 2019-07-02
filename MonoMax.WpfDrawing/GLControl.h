@@ -21,14 +21,13 @@ namespace MonoMaxGraphics
 		System::DateTime mLastUpdate;
 
 		char* mBufferPtr;
-		bool mCanRender;
-		
+
 		System::Windows::Controls::Image^ mImageControl;
 		System::Windows::Media::Imaging::WriteableBitmap^ mWriteableImg;
 
 		void OnTick(System::Object^ sender, System::EventArgs^ e);
 		void UpdateImageData();
-		void RenderThreadLoop(System::Object^ token);
+		void RenderThreadLoop(void);
 		void UpdateFps(void);
 
 	protected:
@@ -37,7 +36,6 @@ namespace MonoMaxGraphics
 		GraphicFramework^ GetGfxFramework(void);
 
 		void Terminate(void);
-		void ChangeState(bool status);
 
 		// overrides
 		void OnRenderSizeChanged(System::Windows::SizeChangedInfo^ info) override;

@@ -47,7 +47,7 @@ namespace MonoMaxGraphics
 		glDeleteShader(id);
 	}
 
-	void ShaderPrg::AddVariable(const char* variable)
+	void ShaderPrg::AddVar(const char* variable)
 	{
 		if (!IsCompiled())
 			throw std::exception("Please compile program before adding variables");
@@ -69,7 +69,7 @@ namespace MonoMaxGraphics
 		mVariables->insert(std::pair<const char*, GLint>(variable, location));
 	}
 
-	GLint ShaderPrg::operator[](const char* variable)
+	GLint ShaderPrg::operator[](const char* variable) const
 	{
 		std::map<const char*, GLint>::iterator it;
 
@@ -103,5 +103,10 @@ namespace MonoMaxGraphics
 	GLuint& ShaderPrg::GetId(void)
 	{
 		return mId;
+	}
+
+	GLuint ShaderPrg::GetVar(const char* variable) const
+	{
+		return (*this)[variable];
 	}
 }

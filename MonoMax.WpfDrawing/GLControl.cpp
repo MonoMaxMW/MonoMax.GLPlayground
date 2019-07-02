@@ -11,6 +11,8 @@ namespace MonoMaxGraphics
 	int _w, _h, _fps;
 	int oldW, oldH;
 
+	volatile bool cancelThread;
+
 	void GLControl::OnRenderSizeChanged(System::Windows::SizeChangedInfo^ info)
 	{
 		_w = (int)info->NewSize.Width;
@@ -22,7 +24,6 @@ namespace MonoMaxGraphics
 			mGraphicsFramework = gcnew MonoMaxGraphics::GraphicFramework();
 			mGraphicsFramework->Init(mGraphicsEngine);
 			
-			mCanRender = true;
 
 			Grid^ mainGrid = gcnew Grid();
 			mFpsCounter = gcnew TextBlock();
@@ -44,10 +45,9 @@ namespace MonoMaxGraphics
 			System::Windows::Controls::Panel::SetZIndex(mImageControl, -1);
 
 			mCancelToken = gcnew CancellationTokenSource();
-			mRenderThread = gcnew Thread(gcnew ParameterizedThreadStart(this, &GLControl::RenderThreadLoop));
+			mRenderThread = gcnew Thread(gcnew ThreadStart(this, &GLControl::RenderThreadLoop));
 			mRenderThread->IsBackground = true;
-			mRenderThread->Start(mCancelToken);
-
+			mRenderThread->Start();
 		}
 
 		mWriteableImg = gcnew WriteableBitmap(_w, _h, 96, 96, PixelFormats::Pbgra32, nullptr);
@@ -63,17 +63,13 @@ namespace MonoMaxGraphics
 
 	void GLControl::Terminate(void)
 	{
-		mCancelToken->Cancel();
+		mCancelToken->Cancel(false);
 		mRenderThread->Abort();
 		mRenderThread->Join();
 
 		delete mGraphicsEngine;
 		delete mGraphicsFramework;
-	}
 
-	void GLControl::ChangeState(bool status)
-	{
-		mCanRender = status;
 	}
 
 	void GLControl::UpdateImageData(void)
@@ -83,37 +79,23 @@ namespace MonoMaxGraphics
 		mWriteableImg->Unlock();
 	}
 
-	void GLControl::RenderThreadLoop(System::Object^ token)
+	void GLControl::RenderThreadLoop(void)
 	{
 		mGraphicsEngine->Init(true);
 		mIsInitialized = true;
 		mLastUpdate = System::DateTime::Now;
 
-		while (!mCancelToken->IsCancellationRequested)
+		while (!cancelThread)
 		{
-			if (mCanRender)
+			if (_w != oldW || _h != oldH)
 			{
-				if (_w != oldW || _h != oldH)
-				{
-					mGraphicsEngine->Resize(_w, _h);
-					oldW = _w;
-					oldH = _h;
-				}
-
-				mGraphicsEngine->Mainloop(mBufferPtr);
-
-				//if ((System::DateTime::Now - m_lastUpdate).TotalMilliseconds >= 1000)
-				//{
-				//	m_ImageControl->Dispatcher->Invoke(gcnew System::Action(this, &GLControl::UpdateFps));
-
-				//	m_lastUpdate = System::DateTime::Now;
-				//	_fps = 0;
-				//}
-
-				mImageControl->Dispatcher->BeginInvoke(gcnew System::Action(this, &GLControl::UpdateImageData));
-
-				//_fps++;
+				mGraphicsEngine->Resize(_w, _h);
+				oldW = _w;
+				oldH = _h;
 			}
+
+			mGraphicsEngine->Mainloop(mBufferPtr);
+			mImageControl->Dispatcher->Invoke(Threading::DispatcherPriority::Send, gcnew System::Action(this, &GLControl::UpdateImageData));
 		}
 	}
 
@@ -141,6 +123,9 @@ namespace MonoMaxGraphics
 
 	void GLControl::OnMouseDown(System::Windows::Input::MouseButtonEventArgs^ e)
 	{
+		if (!mIsInitialized)
+			return;
+
 		int btnId = -1;
 		int x, y;
 
@@ -162,11 +147,17 @@ namespace MonoMaxGraphics
 
 	void GLControl::OnMouseUp(System::Windows::Input::MouseButtonEventArgs^ e)
 	{
+		if (!mIsInitialized)
+			return;
+
 		mGraphicsFramework->MouseUp();
 	}
 
 	void GLControl::OnMouseMove(System::Windows::Input::MouseEventArgs^ e)
 	{
+		if (!mIsInitialized)
+			return;
+
 		int x, y;
 		x = (int)e->GetPosition(this).X;
 		y = (int)e->GetPosition(this).Y;
@@ -176,13 +167,20 @@ namespace MonoMaxGraphics
 
 	void GLControl::OnMouseWheel(System::Windows::Input::MouseWheelEventArgs^ e)
 	{
+		if (!mIsInitialized)
+			return;
+
 		int x, y;
 		x = e->GetPosition(this).X;
 		y = e->GetPosition(this).Y;
 
-		mGraphicsFramework->MouseScroll(x, y, e->Delta);
+		int delta = 0;
+
+		if (e->Delta < 0)
+			delta = -1;
+		else
+			delta = 1;
+
+		mGraphicsFramework->MouseScroll(x, y, delta);
 	}
 }
-
-
-
