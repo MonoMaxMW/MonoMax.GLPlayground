@@ -4,7 +4,7 @@
 #include "../MonoMax.EngineCore/Core.h"
 #include <iostream>
 
-MonoMaxGraphics::GraphicsEngine* engine;
+MonoMaxEngine::GraphicsEngine* engine;
 
 int curX, curY;
 
@@ -63,7 +63,7 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 
 int main()
 {
-	engine = new MonoMaxGraphics::GraphicsEngine();
+	engine = new MonoMaxEngine::GraphicsEngine();
 	engine->Init(false);
 	GLFWwindow* window = engine->GetWindow();
 	

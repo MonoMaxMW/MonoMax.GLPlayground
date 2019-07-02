@@ -1,6 +1,6 @@
 #include "Arcball.h"
 
-namespace MonoMaxGraphics
+namespace MonoMaxEngine
 {
 	int currX, currY, prevX, prevY;
 	glm::quat _quat, _prevQuat;

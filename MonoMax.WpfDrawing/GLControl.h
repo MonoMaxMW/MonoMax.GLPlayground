@@ -16,7 +16,7 @@ namespace MonoMaxGraphics
 		System::Threading::ManualResetEvent^ mManualReset;
 
 		GraphicFramework^ mGraphicsFramework;
-		GraphicsEngine* mGraphicsEngine;
+		MonoMaxEngine::GraphicsEngine* mGraphicsEngine;
 		System::Windows::Controls::TextBlock^ mFpsCounter;
 		System::DateTime mLastUpdate;
 

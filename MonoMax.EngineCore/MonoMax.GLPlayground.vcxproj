@@ -164,6 +164,7 @@
     <ClCompile Include="Arcball.cpp" />
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="MeshNode.cpp" />
+    <ClCompile Include="NodeManager.cpp" />
     <ClCompile Include="ShaderManger.cpp" />
     <ClCompile Include="ShaderPrg.cpp" />
   </ItemGroup>
@@ -176,8 +177,8 @@
     <ClInclude Include="math.h" />
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="MeshNode.h" />
+    <ClInclude Include="NodeManager.h" />
     <ClInclude Include="opengl.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="ShaderManger.h" />
     <ClInclude Include="ShaderPrg.h" />
   </ItemGroup>

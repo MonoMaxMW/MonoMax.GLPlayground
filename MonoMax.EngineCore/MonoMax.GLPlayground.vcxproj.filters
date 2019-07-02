@@ -41,6 +41,9 @@
     <ClCompile Include="MeshNode.cpp">
       <Filter>Source Files\Nodes</Filter>
     </ClCompile>
+    <ClCompile Include="NodeManager.cpp">
+      <Filter>Source Files\Nodes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine.h">
@@ -56,9 +59,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
@@ -77,6 +77,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MeshNode.h">
+      <Filter>Header Files\Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeManager.h">
       <Filter>Header Files\Nodes</Filter>
     </ClInclude>
   </ItemGroup>

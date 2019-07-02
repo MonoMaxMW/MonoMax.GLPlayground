@@ -20,7 +20,7 @@ namespace MonoMaxGraphics
 
 		if (!mIsInitialized)
 		{
-			mGraphicsEngine = new MonoMaxGraphics::GraphicsEngine();
+			mGraphicsEngine = new MonoMaxEngine::GraphicsEngine();
 			mGraphicsFramework = gcnew MonoMaxGraphics::GraphicFramework();
 			mGraphicsFramework->Init(mGraphicsEngine);
 			

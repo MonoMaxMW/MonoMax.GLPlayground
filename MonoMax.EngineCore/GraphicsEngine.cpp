@@ -4,7 +4,7 @@
 #include "ShaderPrg.h"
 
 
-namespace MonoMaxGraphics
+namespace MonoMaxEngine
 {
 	enum MouseState
 	{
@@ -297,7 +297,7 @@ namespace MonoMaxGraphics
 			throw std::exception();
 		}
 
-		_arcball = new MonoMaxGraphics::Arcball();
+		_arcball = new MonoMaxEngine::Arcball();
 
 	}
 

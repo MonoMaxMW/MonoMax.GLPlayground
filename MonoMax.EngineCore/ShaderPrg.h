@@ -4,7 +4,7 @@
 #include "math.h"
 #include "opengl.h"
 
-namespace MonoMaxGraphics
+namespace MonoMaxEngine
 {
 	class ShaderPrg
 	{

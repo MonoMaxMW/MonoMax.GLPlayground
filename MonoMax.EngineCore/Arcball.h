@@ -1,7 +1,8 @@
 #pragma once
+#include "io.h"
 #include "common_math.h"
 
-namespace MonoMaxGraphics
+namespace MonoMaxEngine
 {
 	class Arcball
 	{

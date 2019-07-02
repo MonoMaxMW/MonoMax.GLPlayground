@@ -1,7 +1,7 @@
 #include "ShaderPrg.h"
 #include <cstring>
 
-namespace MonoMaxGraphics
+namespace MonoMaxEngine
 {
 	ShaderPrg::ShaderPrg()
 	{

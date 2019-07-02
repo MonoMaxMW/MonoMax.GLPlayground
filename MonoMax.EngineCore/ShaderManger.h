@@ -2,7 +2,7 @@
 #include "common.h"
 #include "opengl.h"
 
-namespace MonoMaxGraphics
+namespace MonoMaxEngine
 {
 	class ShaderManger
 	{

@@ -11,10 +11,10 @@ namespace MonoMaxGraphics
 	public ref class GraphicFramework
 	{
 	private:
-		GraphicsEngine* mEngine;
+		MonoMaxEngine::GraphicsEngine* mEngine;
 
 	internal:
-		void Init(GraphicsEngine* engine);
+		void Init(MonoMaxEngine::GraphicsEngine* engine);
 
 	public:
 		void AddMesh(System::String^ filename);

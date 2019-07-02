@@ -5,7 +5,7 @@
 #include "ShaderManger.h"
 #include "Arcball.h"
 
-namespace MonoMaxGraphics
+namespace MonoMaxEngine
 {
 	class GraphicsEngine
 	{

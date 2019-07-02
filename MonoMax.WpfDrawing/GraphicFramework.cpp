@@ -4,7 +4,7 @@ using namespace System::Runtime::InteropServices;
 
 namespace MonoMaxGraphics
 {
-	void GraphicFramework::Init(GraphicsEngine* engine)
+	void GraphicFramework::Init(MonoMaxEngine::GraphicsEngine* engine)
 	{
 		mEngine = engine;
 	}

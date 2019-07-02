@@ -1,7 +1,7 @@
 #include "ShaderPrg.h"
 #include "ShaderManger.h"
 
-namespace MonoMaxGraphics
+namespace MonoMaxEngine
 {
 	ShaderManger::ShaderManger()
 	{
