@@ -44,10 +44,10 @@ namespace MonoMaxEngine
 	{
 		mLeftIsDown = false;
 		up = prevUp = glm::vec3(0.0f, 1.0f, 0.0f);
-		pos = prevPos = glm::vec3(0.0f, 0.0f, 5.0f);
+		pos = prevPos = glm::vec3(0.0f, 0.0f, 300.0f);
 		center = prevCenter = glm::vec3(0.0f);
 
-		panMat = glm::mat4(1.0f);
+		panMat = prevPanMat = glm::mat4(1.0f);
 
 		currQuat = identity<quat>();
 
@@ -104,11 +104,13 @@ namespace MonoMaxEngine
 		}
 		else if (isRightDown)
 		{
-			 float panX = (prevX - x) * -0.3f;
-			 float panY = (prevY - y) * 0.3f;
+			needsUpdate = true;
 
-			 glm::mat4 deltaMat = glm::translate(glm::mat4(1.0f), glm::vec3(panX, panY, 0.0f));
-			 panMat = deltaMat * prevPanMat;
+			float panX = (prevX - x) * -0.3f;
+			float panY = (prevY - y) * 0.3f;
+
+			glm::mat4 deltaMat = glm::translate(glm::mat4(1.0f), glm::vec3(panX, panY, 0.0f));
+			panMat = deltaMat * prevPanMat;
 
 		}
 	}
@@ -130,7 +132,7 @@ namespace MonoMaxEngine
 
 
 			posMat = glm::lookAt(pos, center, up);
-			mMatrix = posMat * rotMat;
+			mMatrix = posMat * panMat * rotMat;
 
 
 			transformedPos = pos * mat3(mat4(mMatrix)) * 10.0f;

@@ -70,6 +70,11 @@ namespace MonoMaxEngine
 		mNeedsUpdate = true;
 	}
 
+	void MeshNode::SetScale(const float newScale)
+	{
+		SetScale(vec3(newScale));
+	}
+
 	void MeshNode::SetColor(const vec3 newColor)
 	{
 		mColor = newColor;

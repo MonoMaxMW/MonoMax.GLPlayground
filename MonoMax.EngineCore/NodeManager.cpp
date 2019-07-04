@@ -36,7 +36,7 @@ namespace MonoMaxEngine
 			mNodes->at(i)->Update();
 		}
 	}
-	int NodeManager::Count(void) const
+	int NodeManager::NodeCount(void) const
 	{
 		return (int)mNodes->size();
 	}

@@ -36,6 +36,7 @@ namespace MonoMaxEngine
 		void SetPos(const vec3 newPos);
 		void SetPos(const int x, const int y, const int z);
 		void SetScale(const vec3 newScale);
+		void SetScale(const float newScale);
 		void SetColor(const vec3 newColor);
 		void SetColor(const short r, const short g, const short b);
 		void SetColor(const float r, const float g, const float b);
