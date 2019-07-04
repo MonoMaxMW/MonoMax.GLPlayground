@@ -55,6 +55,7 @@ namespace MonoMaxEngine
 		void MouseDown(const int x, const int y, const int button);
 		void MouseUp(void);
 		void MouseScroll(const int delta);
+		void KeyPress(int key);
 
 		GLFWwindow* GetWindow(void);
 	};

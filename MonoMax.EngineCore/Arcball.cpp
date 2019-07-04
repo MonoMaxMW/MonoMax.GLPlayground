@@ -85,7 +85,7 @@ namespace MonoMaxEngine
 	void Arcball::MouseScroll(const int delta)
 	{
 		int j = delta;
-		float newZ = pos.z - (30.0f * j);
+		float newZ = pos.z - (20.0f * j);
 
 		scaleDelta += delta * 0.3f;
 

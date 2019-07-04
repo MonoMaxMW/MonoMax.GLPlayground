@@ -28,7 +28,7 @@ namespace MonoMaxEngine
 	
 	ShaderPrg* activePrg;
 
-	int defaultNodeCount;
+	int objectSkip;
 
 	MeshNode* node;
 	vec3 nodeColor;
@@ -139,7 +139,8 @@ namespace MonoMaxEngine
 		AddMesh("C:/DEV/MonoMaxCPQ/assets/sphere.stl");
 
 
-		float arrowScale = 5.0f;
+		float arrowScale = 10.0f;
+		float sphereScale = 2.5f;
 
 		node = mNodeManager->GetNodeAt(0);
 		node->SetColor(1.0f, 0.0f, 0.0f);
@@ -155,8 +156,9 @@ namespace MonoMaxEngine
 
 		node = mNodeManager->GetNodeAt(3);
 		node->SetColor(1.0f, 1.0f, 1.0f);
+		node->SetScale(sphereScale);
 
-		defaultNodeCount = mNodeManager->NodeCount();
+		objectSkip = mNodeManager->NodeCount();
 	}
 
 	void GraphicsEngine::updateMeshData(void)
@@ -253,7 +255,7 @@ namespace MonoMaxEngine
 
 			for (int i = 0; i < mNodeManager->NodeCount(); i++)
 			{
-				if (i < defaultNodeCount)
+				if (i < objectSkip)
 				{
 					viewMat = _arcball->GetViewMatrixForDefaultNodes();
 					glDepthRange(0.0f, 0.01f);
@@ -496,5 +498,13 @@ namespace MonoMaxEngine
 	void GraphicsEngine::MouseScroll(const int delta)
 	{
 		_arcball->MouseScroll(delta);
+	}
+	void GraphicsEngine::KeyPress(int key)
+	{
+		if (key == GLFW_KEY_X)
+		{
+			node = mNodeManager->GetNodeAt(objectSkip);
+			node->MoveBy(5.0f, 0.0f, 0.0f);
+		}
 	}
 }

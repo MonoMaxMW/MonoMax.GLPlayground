@@ -53,6 +53,17 @@ namespace MonoMaxEngine
 		return mSessionId;
 	}
 
+	void MeshNode::MoveBy(const vec3 deltaVec)
+	{
+		mPos += deltaVec;
+		mNeedsUpdate = true;
+	}
+
+	void MeshNode::MoveBy(const float x, const float y, const float z)
+	{
+		MoveBy(vec3(x, y, z));
+	}
+
 	void MeshNode::SetPos(vec3 newPos)
 	{
 		mPos = newPos;

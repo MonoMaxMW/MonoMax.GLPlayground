@@ -61,6 +61,11 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 	//std::cout << "X=" << xpos << " Y=" << ypos << "\n";
 }
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	engine->KeyPress(key);
+}
+
 int main()
 {
 	engine = new MonoMaxEngine::GraphicsEngine();
@@ -72,6 +77,7 @@ int main()
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetCursorPosCallback(window, cursor_position_callback);
+	glfwSetKeyCallback(window, key_callback);
 
 	engine->Resize(640, 480);
 	engine->AddMesh("C:/tmp/stl/test_1.stl");

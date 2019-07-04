@@ -32,6 +32,10 @@ namespace MonoMaxEngine
 		mat4& GetMatrix(void);
 		unsigned int& GetSessionId(void);
 
+		//functions
+		void MoveBy(const vec3 deltaVec);
+		void MoveBy(const float x, const float y, const float z);
+
 		//setters
 		void SetPos(const vec3 newPos);
 		void SetPos(const int x, const int y, const int z);
