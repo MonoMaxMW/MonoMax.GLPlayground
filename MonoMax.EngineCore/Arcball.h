@@ -2,6 +2,8 @@
 #include "io.h"
 #include "common_math.h"
 
+using namespace glm;
+
 namespace MonoMaxEngine
 {
 	class Arcball
@@ -26,7 +28,8 @@ namespace MonoMaxEngine
 		void Update(void);
 		glm::vec3& GetTransformedPos(void);
 
-		glm::mat4 GetMatrix(void);
+		mat4 GetViewMatrixForDefaultNodes(void);
+		mat4 GetViewMatrix(void);
 	};
 
 }

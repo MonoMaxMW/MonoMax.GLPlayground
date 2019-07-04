@@ -228,6 +228,8 @@ namespace MonoMaxEngine
 		glUseProgram(0);
 	}
 
+	mat4 viewMat;
+
 	void GraphicsEngine::drawObjects(void)
 	{
 		if (mVertices.size() == 0)
@@ -242,25 +244,30 @@ namespace MonoMaxEngine
 			//glEnableVertexAttribArray(activePrg->GetVar("aPos"));
 			glUseProgram(activePrg->GetId());
 
-			glUniformMatrix4fv(activePrg->GetVar("uViewMat"), 1, GL_FALSE, glm::value_ptr(_arcball->GetMatrix()));
 			glUniformMatrix4fv(activePrg->GetVar("uProjMat"), 1, GL_FALSE, glm::value_ptr(mProjMat));
 
 			glUniform3f(activePrg->GetVar("uViewPos"), _arcballPos.x, _arcballPos.y, _arcballPos.z);
 			glUniform3f(activePrg->GetVar("uLightPos"), _arcballPos.x, _arcballPos.y, _arcballPos.z);
 
+
+
 			for (int i = 0; i < mNodeManager->NodeCount(); i++)
 			{
 				if (i < defaultNodeCount)
+				{
+					viewMat = _arcball->GetViewMatrixForDefaultNodes();
 					glDepthRange(0.0f, 0.01f);
+				}
 				else
+				{
+					viewMat = _arcball->GetViewMatrix();
 					glDepthRange(0.01, 1.0f);
-
+				}
 				node = mNodeManager->GetNodeAt(i);
 				nodeColor = node->GetColor();
-
-
-				glUniform3f(activePrg->GetVar("uItemColor"), nodeColor.r , nodeColor.g, nodeColor.b);
 				glUniformMatrix4fv(activePrg->GetVar("uModlMat"), 1, GL_FALSE, glm::value_ptr(node->GetMatrix()));
+				glUniformMatrix4fv(activePrg->GetVar("uViewMat"), 1, GL_FALSE, glm::value_ptr(viewMat));
+				glUniform3f(activePrg->GetVar("uItemColor"), nodeColor.r , nodeColor.g, nodeColor.b);
 				glDrawArrays(GL_TRIANGLES, node->GetStartIdx(), node->GetOffset());
 			}
 

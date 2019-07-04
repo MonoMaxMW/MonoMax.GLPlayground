@@ -1,15 +1,13 @@
 #include "Arcball.h"
 
-using namespace glm;
-
 namespace MonoMaxEngine
 {
 	int currX, currY, prevX, prevY;
 	quat currQuat, prevQuat;
 	
 	
-	mat4 posMat, panMat, rotMat;
-	mat4 prevPanMat;
+	mat4 posMat, panMat, rotMat, zoomMat;
+	mat4 prevPanMat, viewMat4DefaultNodes;
 	
 	
 	vec3 pos, up, center, forward, pan, transformedPos;
@@ -47,7 +45,11 @@ namespace MonoMaxEngine
 		pos = prevPos = glm::vec3(0.0f, 0.0f, 300.0f);
 		center = prevCenter = glm::vec3(0.0f);
 
-		panMat = prevPanMat = glm::mat4(1.0f);
+		panMat 
+			= prevPanMat 
+			= zoomMat 
+			= viewMat4DefaultNodes
+			= identity<mat4>();
 
 		currQuat = identity<quat>();
 
@@ -78,16 +80,20 @@ namespace MonoMaxEngine
 		isRightDown = false;
 	}
 
+	float scaleDelta = 1.0f;
+
 	void Arcball::MouseScroll(const int delta)
 	{
 		int j = delta;
 		float newZ = pos.z - (30.0f * j);
 
-		if (newZ > 1.0f)
-		{
-			needsUpdate = true;
-			pos.z = newZ;
-		}
+		scaleDelta += delta * 0.3f;
+
+		zoomMat = glm::scale(identity<mat4>(), vec3(scaleDelta));
+
+
+		needsUpdate = true;
+
 	}
 
 	void Arcball::MouseMove(const int x, const int y)
@@ -132,8 +138,8 @@ namespace MonoMaxEngine
 
 
 			posMat = glm::lookAt(pos, center, up);
-			mMatrix = posMat * panMat * rotMat;
-
+			mMatrix = posMat * panMat * rotMat * zoomMat;
+			viewMat4DefaultNodes = posMat * panMat * rotMat;
 
 			transformedPos = pos * mat3(mat4(mMatrix)) * 10.0f;
 
@@ -147,7 +153,12 @@ namespace MonoMaxEngine
 		return transformedPos;
 	}
 
-	glm::mat4 Arcball::GetMatrix(void)
+	mat4 Arcball::GetViewMatrixForDefaultNodes(void)
+	{
+		return viewMat4DefaultNodes;
+	}
+
+	glm::mat4 Arcball::GetViewMatrix(void)
 	{
 		return mMatrix;
 	}
