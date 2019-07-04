@@ -1,11 +1,21 @@
 #include "Arcball.h"
 
+using namespace glm;
+
 namespace MonoMaxEngine
 {
 	int currX, currY, prevX, prevY;
-	glm::quat _quat, _prevQuat;
-	glm::mat4 posMat, transMat, prevTransMat;
-	glm::vec3 pos, up, center, forward, pan, transformedPos;
+	quat currQuat, prevQuat;
+	
+	
+	mat4 posMat, panMat, rotMat;
+	mat4 prevPanMat;
+	
+	
+	vec3 pos, up, center, forward, pan, transformedPos;
+	
+	vec3 prevPos, prevUp, prevCenter;
+	
 	bool needsUpdate;
 	bool isRightDown;
 
@@ -33,16 +43,15 @@ namespace MonoMaxEngine
 	Arcball::Arcball()
 	{
 		mLeftIsDown = false;
-		up = glm::vec3(0.0f, 1.0f, 0.0f);
-		pos = glm::vec3(0.0f, 0.0f, 300.0f);
-		center = glm::vec3(0.0f);
+		up = prevUp = glm::vec3(0.0f, 1.0f, 0.0f);
+		pos = prevPos = glm::vec3(0.0f, 0.0f, 5.0f);
+		center = prevCenter = glm::vec3(0.0f);
 
-		transMat = glm::mat4(1.0f);
+		panMat = glm::mat4(1.0f);
 
-		_quat = glm::quat();
-		_quat.x = 1.0f;
+		currQuat = identity<quat>();
 
-		_prevQuat = _quat;
+		prevQuat = currQuat;
 	}
 
 
@@ -53,13 +62,13 @@ namespace MonoMaxEngine
 
 		if (button == 1)
 		{
-			_prevQuat = _quat;
 			mLeftIsDown = true;
+			prevQuat = currQuat;
 		}
 		else if(button == 2)
 		{
 			isRightDown = true;
-			prevTransMat = transMat;
+			prevPanMat = panMat;
 		}
 	}
 	
@@ -85,12 +94,13 @@ namespace MonoMaxEngine
 	{
 		if (mLeftIsDown)
 		{
+			needsUpdate = true;
+
 			glm::vec3 v1 = glm::normalize(MapToSphere2(prevX, prevY));
 			glm::vec3 v2 = glm::normalize(MapToSphere2(x, y));
 
-
 			glm::quat delta = glm::rotation(v1, v2);
-			_quat = delta * _prevQuat;
+			currQuat = delta * prevQuat;
 		}
 		else if (isRightDown)
 		{
@@ -98,7 +108,7 @@ namespace MonoMaxEngine
 			 float panY = (prevY - y) * 0.3f;
 
 			 glm::mat4 deltaMat = glm::translate(glm::mat4(1.0f), glm::vec3(panX, panY, 0.0f));
-			 transMat = deltaMat * prevTransMat;
+			 panMat = deltaMat * prevPanMat;
 
 		}
 	}
@@ -114,22 +124,19 @@ namespace MonoMaxEngine
 
 	void Arcball::Update(void)
 	{
-		if (needsUpdate || mLeftIsDown || isRightDown)
+		if (needsUpdate)
 		{
+			rotMat = mat4(currQuat);
+
+
 			posMat = glm::lookAt(pos, center, up);
-			mMatrix = posMat * transMat * glm::mat4(_quat);
+			mMatrix = posMat * rotMat;
 
-			glm::vec4 r;
-			r.x = pos.x;
-			r.y = pos.y;
-			r.z = pos.z;
-			r.w = 1.0f;
 
-			r = r * glm::mat4(_quat);
-
-			transformedPos = glm::vec3(r) * 7.0f;
+			transformedPos = pos * mat3(mat4(mMatrix)) * 10.0f;
 
 			needsUpdate = false;
+
 		}
 	}
 

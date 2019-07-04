@@ -9,7 +9,7 @@ namespace MonoMaxEngine
 	{
 	private:
 		unsigned int mStartIndex;
-		unsigned int mCount;
+		unsigned int mOffset;
 		vec3 mPos, mScale;
 		vec3 mColor;
 		mat4 mMatrix;
@@ -24,6 +24,8 @@ namespace MonoMaxEngine
 		void Update(void);
 
 		// getters
+		unsigned int GetStartIdx(void) const;
+		unsigned int GetOffset(void) const;
 		vec3& GetColor(void);
 		vec3& GetPos(void);
 		vec3& GetScale(void);
@@ -35,6 +37,8 @@ namespace MonoMaxEngine
 		void SetPos(const int x, const int y, const int z);
 		void SetScale(const vec3 newScale);
 		void SetColor(const vec3 newColor);
+		void SetColor(const short r, const short g, const short b);
+		void SetColor(const float r, const float g, const float b);
 
 	};
 }

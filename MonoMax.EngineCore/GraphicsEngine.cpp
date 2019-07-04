@@ -22,8 +22,14 @@ namespace MonoMaxEngine
 	GLuint beginIdx, meshCount;
 	unsigned long beginCount = 0;
 	glm::vec3 _arcballPos;
-	GLuint vao, vboP, vboN;
+	
+	GLuint vao, vaoBgr;
+	GLuint vboP, vboN;
+	
 	ShaderPrg* activePrg;
+
+	MeshNode* node;
+	vec3 nodeColor;
 
 	std::string getShaderCode(const char* filename)
 	{
@@ -95,6 +101,30 @@ namespace MonoMaxEngine
 		return prg;
 	}
 
+	ShaderPrg* createGradientBackgroundPrg(void)
+	{
+		ShaderPrg* prg = new ShaderPrg();
+		prg->Create("GradientBackground");
+
+		std::string shaderCode[] =
+		{
+			getShaderCode("C:/DEV/shaders/gradient_bgr_vs.glsl"),
+			getShaderCode("C:/DEV/shaders/gradient_bgr_fs.glsl")
+		};
+		prg->AddShader(GL_VERTEX_SHADER, shaderCode[0]);
+		prg->AddShader(GL_FRAGMENT_SHADER, shaderCode[1]);
+		prg->Compile();
+		{
+			prg->AddVar("aPos");
+			prg->AddVar("uModlMat");
+			prg->AddVar("uViewMat");
+			prg->AddVar("uProjMat");
+			prg->AddVar("uItemColor");
+		}
+
+		return prg;
+	}
+
 	void GraphicsEngine::initShaders(void)
 	{
 		mShaderManager->AddShaderPrg(createSimpleColorPrg());
@@ -104,13 +134,26 @@ namespace MonoMaxEngine
 
 	void GraphicsEngine::initDefaultObjects(void)
 	{
+		AddMesh("C:/DEV/MonoMaxCPQ/assets/arrow_x.stl");
+		AddMesh("C:/DEV/MonoMaxCPQ/assets/arrow_y.stl");
+		AddMesh("C:/DEV/MonoMaxCPQ/assets/arrow_z.stl");
 
+		node = mNodeManager->GetNodeAt(0);
+		node->SetColor(1.0f, 0.0f, 0.0f);
+
+		node = mNodeManager->GetNodeAt(1);
+		node->SetColor(0.0f, 1.0f, 0.0f);
+
+		node = mNodeManager->GetNodeAt(2);
+		node->SetColor(0.0f, 0.0f, 1.0f);
 	}
 
 	void GraphicsEngine::updateMeshData(void)
 	{
 		if (!mNeedsMeshDataUpdate || mVertices.size() == 0)
 			return;
+
+		activePrg = mShaderManager->GetShaderPrg("SimpleLight");
 
 		meshCount = (GLuint)mVertices.size() / 3;
 
@@ -167,14 +210,23 @@ namespace MonoMaxEngine
 			//glEnableVertexAttribArray(activePrg->GetVar("aPos"));
 			glUseProgram(activePrg->GetId());
 
-			glUniformMatrix4fv(activePrg->GetVar("uModlMat"), 1, GL_FALSE, glm::value_ptr(mModlMat));
 			glUniformMatrix4fv(activePrg->GetVar("uViewMat"), 1, GL_FALSE, glm::value_ptr(_arcball->GetMatrix()));
 			glUniformMatrix4fv(activePrg->GetVar("uProjMat"), 1, GL_FALSE, glm::value_ptr(mProjMat));
 
-			glUniform3f(activePrg->GetVar("uItemColor"), 1.0f, 0.0f, 0.0f);
 			glUniform3f(activePrg->GetVar("uViewPos"), _arcballPos.x, _arcballPos.y, _arcballPos.z);
 			glUniform3f(activePrg->GetVar("uLightPos"), _arcballPos.x, _arcballPos.y, _arcballPos.z);
-			glDrawArrays(GL_TRIANGLES, 0, meshCount);
+
+			for (int i = 0; i < mNodeManager->Count(); i++)
+			{
+				node = mNodeManager->GetNodeAt(i);
+				nodeColor = node->GetColor();
+
+
+				glUniform3f(activePrg->GetVar("uItemColor"), nodeColor.r , nodeColor.g, nodeColor.b);
+				glUniformMatrix4fv(activePrg->GetVar("uModlMat"), 1, GL_FALSE, glm::value_ptr(mModlMat));
+				glDrawArrays(GL_TRIANGLES, node->GetStartIdx(), node->GetOffset());
+			}
+
 		}
 		glBindVertexArray(0);
 
@@ -259,7 +311,7 @@ namespace MonoMaxEngine
 			}
 		}
 
-		mNodeManager->AddMeshNode(beginCount, beginCount);
+		mNodeManager->AddMeshNode(beginCount, nrTri * 3);
 
 		beginCount += nrTri * 3;
 
@@ -326,8 +378,8 @@ namespace MonoMaxEngine
 		mProjMat = glm::perspective(
 			glm::radians(60.0f),
 			(float)width / height,
-			10.0f,
-			100000.0f);
+			1.0f,
+			10000.0f);
 
 		glViewport(0, 0, width, height);
 		_arcball->Resize(width, height);
@@ -351,6 +403,7 @@ namespace MonoMaxEngine
 		initWindow(offscreen);
 		initRenderData();
 		initShaders();
+		initDefaultObjects();
 	}
 
 	void GraphicsEngine::Terminate(void)

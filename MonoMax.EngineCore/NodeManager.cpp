@@ -21,6 +21,11 @@ namespace MonoMaxEngine
 		return node;
 	}
 
+	MeshNode* NodeManager::GetNodeAt(const int idx)
+	{
+		return mNodes->at(idx);
+	}
+
 	void NodeManager::Update(void)
 	{
 		if (mNodes->size() <= 0)
@@ -30,5 +35,9 @@ namespace MonoMaxEngine
 		{
 			mNodes->at(i)->Update();
 		}
+	}
+	int NodeManager::Count(void) const
+	{
+		return (int)mNodes->size();
 	}
 }

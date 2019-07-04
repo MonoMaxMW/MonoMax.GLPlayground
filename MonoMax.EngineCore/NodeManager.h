@@ -15,6 +15,8 @@ namespace MonoMaxEngine
 		~NodeManager();
 
 		MeshNode* AddMeshNode(const unsigned int startIndex, const unsigned int count);
+		MeshNode* GetNodeAt(const int idx);
 		void Update(void);
+		int Count(void) const;
 	};
 }
