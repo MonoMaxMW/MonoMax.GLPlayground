@@ -3,7 +3,6 @@
 #include "common.h"
 #include "ShaderPrg.h"
 
-
 namespace MonoMaxEngine
 {
 	enum MouseState
@@ -139,8 +138,8 @@ namespace MonoMaxEngine
 		AddMesh("C:/DEV/MonoMaxCPQ/assets/sphere.stl");
 
 
-		float arrowScale = 10.0f;
-		float sphereScale = 2.5f;
+		float arrowScale = 20.0f;
+		float sphereScale = 5.0f;
 
 		node = mNodeManager->GetNodeAt(0);
 		node->SetColor(1.0f, 0.0f, 0.0f);
@@ -375,7 +374,8 @@ namespace MonoMaxEngine
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		
+		glfwWindowHint(GLFW_DEPTH_BITS, 24);
+
 		if(invisibleWindow)
 			glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
@@ -426,8 +426,8 @@ namespace MonoMaxEngine
 		mProjMat = glm::perspective(
 			glm::radians(60.0f),
 			(float)width / height,
-			1.0f,
-			10000.0f);
+			10.0f,
+			1000.0f);
 
 		glViewport(0, 0, width, height);
 		_arcball->Resize(width, height);
@@ -504,7 +504,7 @@ namespace MonoMaxEngine
 		if (key == GLFW_KEY_X)
 		{
 			node = mNodeManager->GetNodeAt(objectSkip);
-			node->MoveBy(5.0f, 0.0f, 0.0f);
+			node->MoveBy(0.0f, 0.0f, -5.0f);
 		}
 	}
 }

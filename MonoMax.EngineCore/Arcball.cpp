@@ -8,7 +8,7 @@ namespace MonoMaxEngine
 	
 	mat4 posMat, panMat, rotMat, zoomMat;
 	mat4 prevPanMat, viewMat4DefaultNodes;
-	
+	mat4 baseScale;
 	
 	vec3 pos, up, center, forward, pan, transformedPos;
 	
@@ -16,6 +16,7 @@ namespace MonoMaxEngine
 	
 	bool needsUpdate;
 	bool isRightDown;
+	float scaleDelta = 1.0f;
 
 
 	glm::vec3 getVectorWithArc(const int x, const int y, const int radius)
@@ -42,7 +43,7 @@ namespace MonoMaxEngine
 	{
 		mLeftIsDown = false;
 		up = prevUp = glm::vec3(0.0f, 1.0f, 0.0f);
-		pos = prevPos = glm::vec3(0.0f, 0.0f, 300.0f);
+		pos = prevPos = glm::vec3(0.0f, 0.0f, 600.0f);
 		center = prevCenter = glm::vec3(0.0f);
 
 		panMat 
@@ -50,6 +51,9 @@ namespace MonoMaxEngine
 			= zoomMat 
 			= viewMat4DefaultNodes
 			= identity<mat4>();
+
+		baseScale = scale(panMat, vec3(0.5f));
+
 
 		currQuat = identity<quat>();
 
@@ -80,17 +84,18 @@ namespace MonoMaxEngine
 		isRightDown = false;
 	}
 
-	float scaleDelta = 1.0f;
 
 	void Arcball::MouseScroll(const int delta)
 	{
-		int j = delta;
-		float newZ = pos.z - (20.0f * j);
+		if (scaleDelta + (delta * 0.025f) < 0.05f)
+			return;
 
-		scaleDelta += delta * 0.3f;
+		scaleDelta += delta * 0.025f;
 
-		zoomMat = glm::scale(identity<mat4>(), vec3(scaleDelta));
 
+
+
+		std::cout << "zoom=" << scaleDelta << std::endl;
 
 		needsUpdate = true;
 
@@ -98,6 +103,9 @@ namespace MonoMaxEngine
 
 	void Arcball::MouseMove(const int x, const int y)
 	{
+		currX = x;
+		currY = y;
+
 		if (mLeftIsDown)
 		{
 			needsUpdate = true;
@@ -135,13 +143,14 @@ namespace MonoMaxEngine
 		if (needsUpdate)
 		{
 			rotMat = mat4(currQuat);
+			zoomMat = glm::scale(identity<mat4>(), vec3(scaleDelta));
 
 
 			posMat = glm::lookAt(pos, center, up);
-			mMatrix = posMat * panMat * rotMat * zoomMat;
+			mMatrix = posMat * panMat * rotMat * zoomMat * baseScale;
 			viewMat4DefaultNodes = posMat * panMat * rotMat;
 
-			transformedPos = pos * mat3(mat4(mMatrix)) * 10.0f;
+			transformedPos = pos * mat3(mat4(viewMat4DefaultNodes)) * 10.0f;
 
 			needsUpdate = false;
 

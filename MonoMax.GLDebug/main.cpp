@@ -81,6 +81,8 @@ int main()
 
 	engine->Resize(640, 480);
 	engine->AddMesh("C:/tmp/stl/test_1.stl");
+	engine->AddMesh("C:/tmp/stl/test_2.stl");
+
 
 	while (!glfwWindowShouldClose(window))
 	{

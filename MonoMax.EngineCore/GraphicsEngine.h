@@ -6,15 +6,17 @@
 #include "Arcball.h"
 #include "NodeManager.h"
 
+using namespace glm;
+
 namespace MonoMaxEngine
 {
 	class GraphicsEngine
 	{
 
 	private:
-		glm::mat4 mProjMat;
-		glm::mat4 mViewMat;
-		glm::mat4 mModlMat;
+		mat4 mProjMat;
+		mat4 mViewMat;
+		mat4 mModlMat;
 		std::vector<float> mVertices;
 		std::vector<float> mNormals;
 		bool mNeedsMeshDataUpdate;

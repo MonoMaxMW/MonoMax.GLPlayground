@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,17 @@ namespace MonoMax.CPQ.ViewModels.Documents
             LoadMockDataCmd = new RelayCommand<object>(
                 (o) =>
                 {
-                    GfxFramework.AddMesh(@"C:\tmp\stl\test_1.stl");
+                    string[] files = Directory.GetFiles(@"C:\tmp\machines\VT260", "*.stl");
+
+                    if(files != null && files.Length > 0)
+                    {
+                        for (int i = 0; i < files.Length; i++)
+                        {
+                            GfxFramework.AddMesh(files[i]);
+
+                        }
+                    }
+
 
 
                 });
